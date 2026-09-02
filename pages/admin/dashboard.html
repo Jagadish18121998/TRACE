@@ -1,0 +1,345 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TRACE Admin Dashboard</title>
+
+    <link rel="stylesheet" href="../../css/admin.css">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- ================= SIDEBAR ================= -->
+
+        <aside class="sidebar">
+
+            <div class="logo">
+
+                <h1>TRACE</h1>
+
+                <p>
+                    Tracking Reading Assessment,<br>
+                    Competency & Evaluation
+                </p>
+
+            </div>
+
+            <div class="profile-card">
+
+                <div class="profile-image">
+
+                    <i class="fa-solid fa-user"></i>
+
+                </div>
+
+                <div>
+
+                    <h3>Jagadish Mishra</h3>
+
+                    <p>PM SHRI KV Mahe</p>
+
+                    <span class="online">
+                        ● Online
+                    </span>
+
+                </div>
+
+            </div>
+
+            <nav class="menu">
+
+                <button id="dashboardBtn" class="active">
+
+                    <i class="fa-solid fa-house"></i>
+
+                    Dashboard
+
+                </button>
+
+                <button id="classesBtn">
+
+                    <i class="fa-solid fa-school"></i>
+
+                    Classes
+
+                </button>
+
+                <button id="teachersBtn">
+
+                    <i class="fa-solid fa-chalkboard-user"></i>
+
+                    Teachers
+
+                </button>
+
+                <button id="teacherAssignmentsBtn">
+
+                    <i class="fa-solid fa-user-check"></i>
+
+                    Teacher Assigned Classes
+
+                </button>
+
+                <button id="studentsBtn">
+
+                    <i class="fa-solid fa-user-graduate"></i>
+
+                    Students
+
+                </button>
+
+                <button id="passagesBtn">
+
+                    <i class="fa-solid fa-book-open"></i>
+
+                    Passages
+
+                </button>
+
+                <button id="assignPassagesBtn">
+
+                    <i class="fa-solid fa-book-bookmark"></i>
+
+                    Assign Passages
+
+                </button>
+
+                <button id="reportsBtn">
+
+                    <i class="fa-solid fa-chart-column"></i>
+
+                    Reports
+
+                </button>
+
+                <button id="logoutBtn">
+
+                    <i class="fa-solid fa-right-from-bracket"></i>
+
+                    Logout
+
+                </button>
+
+            </nav>
+
+            <div class="sidebar-footer">
+
+                <div class="book">📖</div>
+
+                <h3>Every Reader Matters</h3>
+
+                <p>TRACE v1.0</p>
+
+            </div>
+
+        </aside>
+
+        <!-- ================= MAIN ================= -->
+
+        <main class="main">
+
+            <!-- TOP BAR -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <h1>Admin Dashboard</h1>
+
+                    <p>Welcome back! Here's what's happening with TRACE.</p>
+
+                </div>
+
+                <div class="top-icons">
+
+                    <button>
+
+                        <i class="fa-regular fa-bell"></i>
+
+                    </button>
+
+                    <button>
+
+                        <i class="fa-regular fa-calendar"></i>
+
+                    </button>
+
+                    <div class="date">
+
+                        <span id="todayDate"></span>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+            <!-- SUMMARY CARDS -->
+
+            <section class="summary" id="summarySection">
+
+                <div class="summary-card blue">
+
+                    <i class="fa-solid fa-school"></i>
+
+                    <div>
+
+                        <h2 id="totalClasses">0</h2>
+
+                        <p>Total Classes</p>
+
+                    </div>
+
+                </div>
+
+                <div class="summary-card green">
+
+                    <i class="fa-solid fa-chalkboard-user"></i>
+
+                    <div>
+
+                        <h2 id="totalTeachers">0</h2>
+
+                        <p>Total Teachers</p>
+
+                    </div>
+
+                </div>
+
+                <div class="summary-card orange">
+
+                    <i class="fa-solid fa-user-graduate"></i>
+
+                    <div>
+
+                        <h2 id="totalStudents">0</h2>
+
+                        <p>Total Students</p>
+
+                    </div>
+
+                </div>
+
+                <div class="summary-card purple">
+
+                    <i class="fa-solid fa-book-open"></i>
+
+                    <div>
+
+                        <h2 id="totalPassages">0</h2>
+
+                        <p>Total Passages</p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- DASHBOARD CONTENT -->
+
+            <section class="dashboard-grid" id="dashboardHome">
+
+                <div class="panel large">
+
+                    <h3>📈 Reading Assessment Overview</h3>
+
+                    <canvas id="readingChart"></canvas>
+
+                </div>
+
+                <div class="panel">
+
+                    <h3>🎯 Assessment Status</h3>
+
+                    <canvas id="statusChart"></canvas>
+
+                </div>
+
+                <div class="panel">
+
+                    <h3>🕒 Recent Activities</h3>
+
+                    <ul class="activity-list">
+
+                        <li>No activity available.</li>
+
+                    </ul>
+
+                </div>
+
+                <div class="panel">
+
+                    <h3>⚡ Quick Actions</h3>
+
+                    <div class="quick-buttons">
+
+                        <button id="quickClass">
+
+                            Add Class
+
+                        </button>
+
+                        <button id="quickTeacher">
+
+                            Add Teacher
+
+                        </button>
+
+                        <button id="quickStudent">
+
+                            Add Student
+
+                        </button>
+
+                        <button id="quickPassage">
+
+                            Add Passage
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- DYNAMIC MODULE CONTENT -->
+
+            <section id="content" style="display:none;"></section>
+
+            <!-- FOOTER -->
+
+            <footer>
+
+                <span>🏆 Every Reader Matters</span>
+
+                <span>Every Assessment Counts</span>
+
+                <span>TRACE v1.0</span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script type="module" src="../../js/dashboard.js"></script>
+
+</body>
+
+</html>
+```

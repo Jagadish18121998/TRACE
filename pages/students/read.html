@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>TRACE Reading Room</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:"Segoe UI",sans-serif;
+        }
+
+        body{
+
+            min-height:100vh;
+            padding:18px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #e0f2fe,
+                    #f8fbff,
+                    #ffffff
+                );
+
+        }
+
+        .reader{
+
+            max-width:850px;
+            margin:auto;
+
+            background:#ffffff;
+
+            border-radius:26px;
+
+            padding:28px;
+
+            box-shadow:
+                0 10px 28px
+                rgba(0,0,0,0.08);
+
+        }
+
+        .reader-header{
+
+            text-align:center;
+            margin-bottom:24px;
+
+        }
+
+        .reader-header h1{
+
+            color:#0f4cdb;
+            font-size:2rem;
+            margin-bottom:8px;
+
+        }
+
+        .reader-header p{
+
+            color:#64748b;
+            font-size:14px;
+
+        }
+
+        .timer{
+
+            text-align:right;
+            font-weight:700;
+            color:#ef4444;
+            margin-bottom:15px;
+            font-size:16px;
+
+        }
+
+        .passage-box{
+
+            background:#f8fbff;
+
+            border:1px solid #e2e8f0;
+
+            border-radius:20px;
+
+            padding:24px;
+
+            margin-bottom:24px;
+
+        }
+
+        #passageTitle{
+
+            color:#0f172a;
+
+            margin-bottom:18px;
+
+            font-size:1.5rem;
+
+        }
+
+        #passageText{
+
+            font-size:18px;
+
+            line-height:1.9;
+
+            color:#334155;
+
+            text-align:justify;
+
+        }
+
+        .record-section{
+
+            display:flex;
+
+            justify-content:center;
+
+            gap:12px;
+
+            flex-wrap:wrap;
+
+            margin-bottom:20px;
+
+        }
+
+        .btn{
+
+            border:none;
+
+            padding:12px 18px;
+
+            border-radius:14px;
+
+            font-size:15px;
+
+            font-weight:600;
+
+            cursor:pointer;
+
+            transition:0.3s;
+
+            color:white;
+
+        }
+
+        .btn:hover{
+
+            transform:translateY(-2px);
+
+            box-shadow:
+                0 10px 22px
+                rgba(0,0,0,0.15);
+
+        }
+
+        .record-btn{
+
+            background:#ef4444;
+
+        }
+
+        .stop-btn{
+
+            background:#f59e0b;
+
+        }
+
+        .play-btn{
+
+            background:#16a34a;
+
+        }
+
+        .next-btn{
+
+            background:#0f4cdb;
+
+            width:100%;
+
+        }
+
+        .submit-btn{
+
+            background:#16a34a;
+
+            width:100%;
+
+            display:none;
+
+        }
+
+        .back-btn{
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #0f4cdb,
+                    #00b4ff
+                );
+
+            width:100%;
+
+        }
+
+        #recordStatus{
+
+            text-align:center;
+
+            color:#64748b;
+
+            margin-bottom:22px;
+
+        }
+
+        .bottom-buttons{
+
+            display:flex;
+
+            flex-direction:column;
+
+            gap:14px;
+
+        }
+
+        .loading{
+
+            text-align:center;
+
+            color:#64748b;
+
+        }
+
+        .error{
+
+            text-align:center;
+
+            color:#dc2626;
+
+            font-weight:600;
+
+        }
+
+        @media(max-width:600px){
+
+            body{
+
+                padding:12px;
+
+            }
+
+            .reader{
+
+                padding:22px 18px;
+
+            }
+
+            .reader-header h1{
+
+                font-size:1.6rem;
+
+            }
+
+            #passageText{
+
+                font-size:17px;
+
+                line-height:1.8;
+
+            }
+
+            .record-section{
+
+                flex-direction:column;
+
+            }
+
+            .record-section .btn{
+
+                width:100%;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="reader">
+
+
+    <div class="reader-header">
+
+        <h1 id="readerHeading">
+            📖 TRACE Reading Room
+        </h1>
+
+        <p>
+            Read the passage carefully and complete your reading task.
+        </p>
+
+    </div>
+
+
+    <div
+        class="timer"
+        id="timer"
+    >
+        ⏱ Ready (60s)
+    </div>
+
+
+    <div class="passage-box">
+
+        <h2 id="passageTitle">
+            Loading Passage...
+        </h2>
+
+        <p
+            id="passageText"
+            class="loading"
+        >
+            Please wait...
+        </p>
+
+    </div>
+
+
+    <div class="record-section">
+
+        <button
+            class="btn record-btn"
+            id="startBtn"
+            onclick="startRecording()"
+        >
+            🎤 Start
+        </button>
+
+
+        <button
+            class="btn stop-btn"
+            onclick="stopRecording()"
+        >
+            ⏹ Stop
+        </button>
+
+
+        <button
+            class="btn play-btn"
+            onclick="playRecording()"
+        >
+            ▶ Play
+        </button>
+
+    </div>
+
+
+    <div id="recordStatus">
+        🎧 Ready for reading
+    </div>
+
+
+    <div class="bottom-buttons">
+
+        <button
+            class="btn next-btn"
+            id="nextBtn"
+            onclick="nextSlide()"
+        >
+            ➡ Next Slide
+        </button>
+
+
+        <button
+            class="btn submit-btn"
+            id="submitBtn"
+            onclick="submitPassage()"
+        >
+            ✅ Submit Passage
+        </button>
+
+
+        <button
+            class="btn back-btn"
+            onclick="goBack()"
+        >
+            ⬅ Back to Dashboard
+        </button>
+
+    </div>
+
+</div>
+
+
+<script type="module">
+
+
+/* =====================================================
+   FIREBASE
+===================================================== */
+
+import { db } from '../../firebase/firebase.js';
+
+import {
+
+    doc,
+    getDoc,
+    collection,
+    addDoc,
+    serverTimestamp
+
+} from
+'https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js';
+
+
+
+/* =====================================================
+   PASSAGE
+===================================================== */
+
+const passageId =
+    localStorage.getItem(
+        'selectedPassage'
+    );
+
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let currentSlides = [];
+
+let currentSlide = 0;
+
+let passageData = null;
+
+let timeLeft = 60;
+
+let timerInterval = null;
+
+let mediaRecorder = null;
+
+let audioChunks = [];
+
+let audioBlob = null;
+
+let recognition = null;
+
+let recognitionSupported = false;
+
+let recognitionStarted = false;
+
+let recognizedTranscript = '';
+
+let readingStartTime = null;
+
+let readingEndTime = null;
+
+
+
+/* =====================================================
+   SPEECH RECOGNITION
+===================================================== */
+
+const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+
+if(SpeechRecognition){
+
+    recognitionSupported = true;
+
+    recognition =
+        new SpeechRecognition();
+
+    recognition.continuous = true;
+
+    recognition.interimResults = true;
+
+    recognition.lang = 'en-IN';
+
+
+    recognition.onresult =
+        function(event){
+
+            let finalText = '';
+
+            for(
+                let i = event.resultIndex;
+                i < event.results.length;
+                i++
+            ){
+
+                if(
+                    event.results[i].isFinal
+                ){
+
+                    finalText +=
+                        event.results[i][0]
+                            .transcript +
+                        ' ';
+
+                }
+
+            }
+
+
+            recognizedTranscript =
+                (
+                    recognizedTranscript +
+                    ' ' +
+                    finalText
+                )
+                .replace(
+                    /\s+/g,
+                    ' '
+                )
+                .trim();
+
+        };
+
+
+    recognition.onerror =
+        function(event){
+
+            console.warn(
+                'Speech recognition:',
+                event.error
+            );
+
+        };
+
+
+    recognition.onend =
+        function(){
+
+            recognitionStarted =
+                false;
+
+        };
+
+}
+
+
+
+/* =====================================================
+   LOAD PASSAGE
+===================================================== */
+
+async function loadPassage(){
+
+    if(!passageId){
+
+        showError(
+            'No passage selected. Please return to the dashboard.'
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        const passageRef =
+            doc(
+                db,
+                'passages',
+                passageId
+            );
+
+
+        const snapshot =
+            await getDoc(
+                passageRef
+            );
+
+
+        if(!snapshot.exists()){
+
+            showError(
+                'The selected passage could not be found.'
+            );
+
+            return;
+
+        }
+
+
+        passageData =
+            snapshot.data();
+
+
+        /*
+         Support the current Admin format:
+         passageData.text
+
+         Also support older:
+         slide1 / slide2
+        */
+
+        if(
+            passageData.text &&
+            String(
+                passageData.text
+            ).trim()
+        ){
+
+            currentSlides = [
+
+                String(
+                    passageData.text
+                ).trim()
+
+            ];
+
+        }
+
+        else{
+
+            currentSlides = [
+
+                passageData.slide1 || '',
+
+                passageData.slide2 || ''
+
+            ].filter(
+                text =>
+                    String(text).trim()
+            );
+
+        }
+
+
+        if(
+            currentSlides.length === 0
+        ){
+
+            showError(
+                'This passage does not contain any reading text.'
+            );
+
+            return;
+
+        }
+
+
+        document.getElementById(
+            'readerHeading'
+        ).innerText =
+            `📖 ${
+                passageData.title ||
+                'TRACE Reading'
+            }`;
+
+
+        showSlide();
+
+    }
+
+    catch(error){
+
+        console.error(
+            'Passage loading error:',
+            error
+        );
+
+
+        showError(
+            'Unable to load the passage. Please try again.'
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   SHOW SLIDE
+===================================================== */
+
+function showSlide(){
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    timeLeft = 60;
+
+    readingStartTime = null;
+
+    readingEndTime = null;
+
+    recognizedTranscript = '';
+
+    audioBlob = null;
+
+    audioChunks = [];
+
+
+    document.getElementById(
+        'passageTitle'
+    ).innerText =
+        `📖 Slide ${
+            currentSlide + 1
+        }`;
+
+
+    document.getElementById(
+        'passageText'
+    ).innerText =
+        currentSlides[
+            currentSlide
+        ];
+
+
+    document.getElementById(
+        'passageText'
+    ).className = '';
+
+
+    document.getElementById(
+        'timer'
+    ).innerText =
+        '⏱ Ready (60s)';
+
+
+    document.getElementById(
+        'recordStatus'
+    ).innerText =
+        '🎧 Ready for reading';
+
+
+    document.getElementById(
+        'startBtn'
+    ).disabled =
+        false;
+
+
+    if(
+        currentSlide ===
+        currentSlides.length - 1
+    ){
+
+        document.getElementById(
+            'nextBtn'
+        ).style.display =
+            'none';
+
+
+        document.getElementById(
+            'submitBtn'
+        ).style.display =
+            'block';
+
+    }
+
+    else{
+
+        document.getElementById(
+            'nextBtn'
+        ).style.display =
+            'block';
+
+
+        document.getElementById(
+            'submitBtn'
+        ).style.display =
+            'none';
+
+    }
+
+}
+
+
+
+/* =====================================================
+   TIMER
+===================================================== */
+
+function startTimer(){
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    timeLeft = 60;
+
+    updateTimer();
+
+
+    timerInterval =
+        setInterval(
+            () => {
+
+                timeLeft--;
+
+                updateTimer();
+
+
+                if(
+                    timeLeft <= 0
+                ){
+
+                    clearInterval(
+                        timerInterval
+                    );
+
+
+                    readingEndTime =
+                        Date.now();
+
+
+                    if(
+                        mediaRecorder &&
+                        mediaRecorder.state ===
+                        'recording'
+                    ){
+
+                        mediaRecorder.stop();
+
+                    }
+
+
+                    stopSpeechRecognition();
+
+
+                    document.getElementById(
+                        'timer'
+                    ).innerText =
+                        '⏰ Time completed';
+
+
+                    document.getElementById(
+                        'recordStatus'
+                    ).innerText =
+                        '⏰ One minute completed';
+
+                }
+
+            },
+            1000
+        );
+
+}
+
+
+
+function updateTimer(){
+
+    document.getElementById(
+        'timer'
+    ).innerText =
+        `⏱ ${timeLeft}s`;
+
+}
+
+
+
+/* =====================================================
+   START RECORDING
+===================================================== */
+
+window.startRecording =
+    async function(){
+
+        try{
+
+            if(
+                !navigator.mediaDevices ||
+                !navigator.mediaDevices.getUserMedia
+            ){
+
+                alert(
+                    'Microphone recording is not supported in this browser.'
+                );
+
+                return;
+
+            }
+
+
+            const stream =
+                await navigator.mediaDevices
+                    .getUserMedia({
+                        audio:true
+                    });
+
+
+            mediaRecorder =
+                new MediaRecorder(
+                    stream
+                );
+
+
+            audioChunks = [];
+
+
+            mediaRecorder.ondataavailable =
+                function(event){
+
+                    if(
+                        event.data.size > 0
+                    ){
+
+                        audioChunks.push(
+                            event.data
+                        );
+
+                    }
+
+                };
+
+
+            mediaRecorder.onstop =
+                function(){
+
+                    audioBlob =
+                        new Blob(
+                            audioChunks,
+                            {
+                                type:
+                                    'audio/webm'
+                            }
+                        );
+
+
+                    stream
+                        .getTracks()
+                        .forEach(
+                            track =>
+                                track.stop()
+                        );
+
+
+                    document.getElementById(
+                        'recordStatus'
+                    ).innerText =
+                        '✅ Recording saved';
+
+                };
+
+
+            mediaRecorder.start();
+
+
+            recognizedTranscript = '';
+
+
+            if(
+                recognitionSupported
+            ){
+
+                try{
+
+                    recognition.start();
+
+                    recognitionStarted =
+                        true;
+
+                }
+
+                catch(error){
+
+                    console.warn(
+                        'Speech recognition:',
+                        error
+                    );
+
+                }
+
+            }
+
+
+            readingStartTime =
+                Date.now();
+
+
+            startTimer();
+
+
+            document.getElementById(
+                'recordStatus'
+            ).innerText =
+                recognitionSupported
+                    ? '🎙 Reading...'
+                    : '🎙 Recording...';
+
+
+            document.getElementById(
+                'startBtn'
+            ).disabled =
+                true;
+
+        }
+
+        catch(error){
+
+            console.error(
+                'Microphone error:',
+                error
+            );
+
+
+            alert(
+                'Microphone access is required. Please allow microphone permission and try again.'
+            );
+
+        }
+
+    };
+
+
+
+/* =====================================================
+   STOP SPEECH RECOGNITION
+===================================================== */
+
+function stopSpeechRecognition(){
+
+    if(
+        recognition &&
+        recognitionStarted
+    ){
+
+        try{
+
+            recognition.stop();
+
+        }
+
+        catch(error){
+
+            console.warn(
+                error
+            );
+
+        }
+
+
+        recognitionStarted =
+            false;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   STOP RECORDING
+===================================================== */
+
+window.stopRecording =
+    function(){
+
+        clearInterval(
+            timerInterval
+        );
+
+
+        readingEndTime =
+            Date.now();
+
+
+        stopSpeechRecognition();
+
+
+        document.getElementById(
+            'timer'
+        ).innerText =
+            '⏱ Stopped';
+
+
+        if(
+            mediaRecorder &&
+            mediaRecorder.state ===
+            'recording'
+        ){
+
+            mediaRecorder.stop();
+
+        }
+
+    };
+
+
+
+/* =====================================================
+   PLAY RECORDING
+===================================================== */
+
+window.playRecording =
+    function(){
+
+        if(!audioBlob){
+
+            alert(
+                'No recording available. Please record first.'
+            );
+
+            return;
+
+        }
+
+
+        const audio =
+            new Audio(
+                URL.createObjectURL(
+                    audioBlob
+                )
+            );
+
+
+        audio.play();
+
+    };
+
+
+
+/* =====================================================
+   NEXT SLIDE
+===================================================== */
+
+window.nextSlide =
+    function(){
+
+        clearInterval(
+            timerInterval
+        );
+
+
+        stopSpeechRecognition();
+
+
+        if(
+            mediaRecorder &&
+            mediaRecorder.state ===
+            'recording'
+        ){
+
+            mediaRecorder.stop();
+
+        }
+
+
+        if(
+            currentSlide <
+            currentSlides.length - 1
+        ){
+
+            currentSlide++;
+
+            showSlide();
+
+        }
+
+    };
+
+
+
+/* =====================================================
+   SUBMIT
+===================================================== */
+
+window.submitPassage =
+    async function(){
+
+        clearInterval(
+            timerInterval
+        );
+
+
+        readingEndTime =
+            Date.now();
+
+
+        stopSpeechRecognition();
+
+
+        if(
+            mediaRecorder &&
+            mediaRecorder.state ===
+            'recording'
+        ){
+
+            mediaRecorder.stop();
+
+        }
+
+
+        const studentName =
+            localStorage.getItem(
+                'studentName'
+            ) ||
+            'Unknown Student';
+
+
+        const studentId =
+            localStorage.getItem(
+                'studentId'
+            ) ||
+            '';
+
+
+        const studentClass =
+            localStorage.getItem(
+                'studentClass'
+            ) ||
+            '';
+
+
+        const studentSection =
+            localStorage.getItem(
+                'studentSection'
+            ) ||
+            '';
+
+
+        const readingTime =
+            readingStartTime
+                ? Math.max(
+                    1,
+                    Math.round(
+                        (
+                            readingEndTime -
+                            readingStartTime
+                        ) / 1000
+                    )
+                )
+                : 0;
+
+
+        try{
+
+            await addDoc(
+
+                collection(
+                    db,
+                    'submissions'
+                ),
+
+                {
+
+                    studentName:
+                        studentName,
+
+                    studentId:
+                        studentId,
+
+                    class:
+                        studentClass,
+
+                    section:
+                        studentSection,
+
+                    passageId:
+                        passageId,
+
+                    passageTitle:
+                        passageData
+                            ? passageData.title
+                            : '',
+
+                    status:
+                        'completed',
+
+                    readingTime:
+                        readingTime,
+
+                    transcript:
+                        recognizedTranscript,
+
+                    submittedAt:
+                        serverTimestamp()
+
+                }
+
+            );
+
+
+            let completedPassages =
+                JSON.parse(
+                    localStorage.getItem(
+                        'completedPassages'
+                    )
+                ) || [];
+
+
+            if(
+                !completedPassages.includes(
+                    passageId
+                )
+            ){
+
+                completedPassages.push(
+                    passageId
+                );
+
+            }
+
+
+            localStorage.setItem(
+                'completedPassages',
+                JSON.stringify(
+                    completedPassages
+                )
+            );
+
+
+            localStorage.setItem(
+                'completedCount',
+                completedPassages.length
+            );
+
+
+            alert(
+                '🎉 Passage submitted successfully!'
+            );
+
+
+            window.location.href =
+                'dashboard.html';
+
+        }
+
+        catch(error){
+
+            console.error(
+                'Submission error:',
+                error
+            );
+
+
+            alert(
+                '❌ Submission could not be saved. Please try again.'
+            );
+
+        }
+
+    };
+
+
+
+/* =====================================================
+   BACK
+===================================================== */
+
+window.goBack =
+    function(){
+
+        clearInterval(
+            timerInterval
+        );
+
+
+        stopSpeechRecognition();
+
+
+        if(
+            mediaRecorder &&
+            mediaRecorder.state ===
+            'recording'
+        ){
+
+            mediaRecorder.stop();
+
+        }
+
+
+        window.location.href =
+            'dashboard.html';
+
+    };
+
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+function showError(message){
+
+    document.getElementById(
+        'passageTitle'
+    ).innerText =
+        '⚠️ Passage Error';
+
+
+    document.getElementById(
+        'passageText'
+    ).innerText =
+        message;
+
+
+    document.getElementById(
+        'passageText'
+    ).className =
+        'error';
+
+
+    document.getElementById(
+        'nextBtn'
+    ).style.display =
+        'none';
+
+
+    document.getElementById(
+        'submitBtn'
+    ).style.display =
+        'none';
+
+}
+
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadPassage();
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRACE - Reading Assessment</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+background:#edf4ff;
+}
+
+header{
+background:#2563eb;
+color:white;
+padding:20px;
+text-align:center;
+font-size:30px;
+font-weight:bold;
+}
+
+.container{
+width:90%;
+max-width:1000px;
+margin:30px auto;
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+.info{
+display:flex;
+justify-content:space-between;
+margin-bottom:20px;
+font-weight:bold;
+font-size:18px;
+}
+
+.progress{
+width:100%;
+height:15px;
+background:#ddd;
+border-radius:20px;
+overflow:hidden;
+margin:20px 0;
+}
+
+.bar{
+height:100%;
+width:50%;
+background:#22c55e;
+}
+
+.timer{
+text-align:center;
+font-size:45px;
+font-weight:bold;
+color:#ef4444;
+margin:25px 0;
+}
+
+.passage{
+font-size:26px;
+line-height:2;
+text-align:justify;
+padding:20px;
+background:#fafafa;
+border-radius:10px;
+border-left:8px solid #2563eb;
+}
+
+.buttons{
+display:flex;
+justify-content:space-between;
+margin-top:40px;
+}
+
+button{
+padding:15px 35px;
+font-size:18px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+background:#2563eb;
+color:white;
+}
+
+button:hover{
+background:#1d4ed8;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+TRACE Reading Assessment
+</header>
+
+<div class="container">
+
+<div class="info">
+<div>Student : Demo Student</div>
+<div>Class : V</div>
+</div>
+
+<div class="info">
+<div>Language : English</div>
+<div>Page 1 of 2</div>
+</div>
+
+<div class="progress">
+<div class="bar"></div>
+</div>
+
+<div class="timer" id="timer">
+01:00
+</div>
+
+<div class="passage">
+
+const passages = [
+
+`Once there was a little rabbit who lived in a beautiful forest.
+Every morning he woke up early and greeted all his friends.
+He loved reading stories and helping everyone around him.
+One day he found a small bird that had fallen from its nest.`,
+
+`The rabbit carefully picked up the little bird and placed it back in its nest.
+The bird's mother thanked him for his kindness.
+From that day, everyone in the forest admired the rabbit because he always helped others with a smile.`
+
+];
+
+let currentPage = 0;
+
+let time = 60;
+
+const timer = document.getElementById("timer");
+const passage = document.querySelector(".passage");
+const progress = document.querySelector(".bar");
+const nextButton = document.querySelector(".buttons button:last-child");
+
+passage.innerHTML = passages[currentPage];
+
+startTimer();
+
+function startTimer(){
+
+clearInterval(window.countdown);
+
+time = 60;
+
+updateTimer();
+
+window.countdown = setInterval(()=>{
+
+time--;
+
+updateTimer();
+
+if(time<=0){
+
+clearInterval(window.countdown);
+
+nextPage();
+
+}
+
+},1000);
+
+}
+
+function updateTimer(){
+
+let min = Math.floor(time/60);
+
+let sec = time%60;
+
+timer.innerHTML =
+String(min).padStart(2,"0")
++":"
++
+String(sec).padStart(2,"0");
+
+}
+
+function nextPage(){
+
+if(currentPage==0){
+
+currentPage=1;
+
+passage.innerHTML=passages[currentPage];
+
+progress.style.width="100%";
+
+document.querySelectorAll(".info")[1].children[1].innerHTML="Page 2 of 2";
+
+nextButton.innerHTML="Submit Assessment";
+
+startTimer();
+
+}
+
+else{
+
+clearInterval(window.countdown);
+
+alert("Assessment Submitted Successfully!");
+
+}
+
+}
+
+</div>
+
+<div class="buttons">
+
+<button>Logout</button>
+
+<button onclick="nextPage()">Next ▶</button>
+
+</div>
+
+</div>
+
+<script>
+
+let time=60;
+
+let timer=document.getElementById("timer");
+
+let countdown=setInterval(function(){
+
+time--;
+
+let min=Math.floor(time/60);
+let sec=time%60;
+
+timer.innerHTML=
+String(min).padStart(2,'0')
++":"
++String(sec).padStart(2,'0');
+
+if(time<=0){
+clearInterval(countdown);
+alert("Time is over. Opening Page 2.");
+nextPage();
+}
+
+},1000);
+
+function nextPage(){
+
+alert("Page 2 will open here.");
+
+}
+
+</script>
+
+</body>
+</html>

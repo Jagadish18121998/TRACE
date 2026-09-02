@@ -1,0 +1,279 @@
+/* ===========================
+   TRACE Landing Page
+=========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+
+    min-height:100vh;
+
+    background:linear-gradient(135deg,#0F6CBD,#49A6FF);
+
+    overflow:hidden;
+
+}
+
+.background{
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+
+    height:100%;
+
+    background:
+    radial-gradient(circle at top right,
+    rgba(255,255,255,.18),
+    transparent 45%),
+
+    radial-gradient(circle at bottom left,
+    rgba(255,255,255,.12),
+    transparent 40%);
+
+    z-index:-1;
+
+    pointer-events:none;
+
+}
+
+
+.main-container{
+
+    position:relative;
+
+    z-index:10;
+
+    width:92%;
+
+    max-width:1400px;
+
+    height:88vh;
+
+    margin:40px auto;
+
+    background:white;
+
+    border-radius:30px;
+
+    display:flex;
+
+    overflow:hidden;
+
+    box-shadow:
+    0 25px 60px rgba(0,0,0,.18);
+
+}
+.left-panel{
+
+    width:42%;
+
+    background:linear-gradient(180deg,#0F6CBD,#1B84E7);
+
+    color:white;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:50px;
+
+    text-align:center;
+
+}
+
+.logo{
+
+    font-size:70px;
+
+    font-weight:800;
+
+    letter-spacing:4px;
+
+    margin-bottom:20px;
+
+}
+
+.fullform{
+
+    font-size:30px;
+
+    line-height:1.4;
+
+    margin-bottom:20px;
+
+}
+
+.tagline{
+
+    font-size:22px;
+
+    opacity:.95;
+
+    margin-bottom:35px;
+
+}
+.profile-photo{
+
+    width:180px;
+
+    height:180px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:6px solid white;
+
+    box-shadow:0 10px 35px rgba(0,0,0,.35);
+
+    margin-bottom:20px;
+
+}
+
+.name{
+
+    font-size:34px;
+
+    margin-top:10px;
+
+}
+
+.designation{
+
+    font-size:22px;
+
+    margin-top:8px;
+
+}
+
+.school{
+
+    margin-top:15px;
+
+    font-size:20px;
+
+    line-height:1.5;
+
+}
+.right-panel{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    padding:70px;
+
+}
+
+.right-panel h1{
+
+    font-size:52px;
+
+    color:#0F6CBD;
+
+}
+
+.welcome-text{
+
+    font-size:22px;
+
+    color:#666;
+
+    margin:20px 0 50px;
+
+}
+.login-container{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:25px;
+
+}
+
+.login-card{
+
+    border:none;
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:28px;
+
+    text-align:left;
+
+    cursor:pointer;
+
+    box-shadow:
+
+    0 10px 25px rgba(0,0,0,.08);
+
+    transition:.35s;
+
+}
+
+.login-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:
+
+    0 20px 40px rgba(15,108,189,.25);
+
+}
+
+.icon{
+
+    font-size:42px;
+
+}
+
+.login-card h2{
+
+    color:#0F6CBD;
+
+    margin:12px 0;
+
+}
+
+.login-card p{
+
+    color:#555;
+
+}
+footer{
+
+    position:fixed;
+
+    bottom:18px;
+
+    width:100%;
+
+    text-align:center;
+
+    color:white;
+
+    font-size:18px;
+
+    font-weight:600;
+
+}

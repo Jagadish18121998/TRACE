@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>TRACE Teacher Dashboard</title>
+
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:"Segoe UI",sans-serif;
+}
+
+
+body{
+
+    min-height:100vh;
+
+    background:
+        linear-gradient(
+            135deg,
+            #e0f2fe,
+            #f8fbff,
+            #ffffff
+        );
+
+    padding:25px;
+
+}
+
+
+.container{
+
+    max-width:1100px;
+
+    margin:auto;
+
+}
+
+
+/* HEADER */
+
+.header{
+
+    background:
+        linear-gradient(
+            135deg,
+            #0f4cdb,
+            #2563eb
+        );
+
+    color:white;
+
+    border-radius:24px;
+
+    padding:28px 32px;
+
+    margin-bottom:25px;
+
+    box-shadow:
+        0 10px 25px
+        rgba(15,76,219,.20);
+
+}
+
+
+.header-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+
+.header h1{
+
+    font-size:2rem;
+
+    margin-bottom:8px;
+
+}
+
+
+.header p{
+
+    opacity:.9;
+
+}
+
+
+.logout-btn{
+
+    border:none;
+
+    padding:10px 16px;
+
+    border-radius:10px;
+
+    background:white;
+
+    color:#0f4cdb;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+}
+
+
+/* ASSIGNMENT */
+
+.assignment-box{
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:20px;
+
+    margin-bottom:25px;
+
+    box-shadow:
+        0 10px 25px
+        rgba(0,0,0,.07);
+
+}
+
+
+.assignment-box h2{
+
+    margin-bottom:12px;
+
+    color:#0f172a;
+
+}
+
+
+.assignment-info{
+
+    display:flex;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+
+}
+
+
+.badge{
+
+    padding:9px 15px;
+
+    border-radius:20px;
+
+    background:#eff6ff;
+
+    color:#1d4ed8;
+
+    font-weight:600;
+
+}
+
+
+/* STATS */
+
+.stats{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:20px;
+
+    margin-bottom:25px;
+
+}
+
+
+.stat-card{
+
+    padding:25px;
+
+    border-radius:20px;
+
+    color:white;
+
+    box-shadow:
+        0 10px 25px
+        rgba(0,0,0,.10);
+
+}
+
+
+.stat-card h3{
+
+    font-size:15px;
+
+    margin-bottom:10px;
+
+}
+
+
+.number{
+
+    font-size:2.2rem;
+
+    font-weight:700;
+
+}
+
+
+.students-card{
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #0f4cdb
+        );
+
+}
+
+
+.completed-card{
+
+    background:
+        linear-gradient(
+            135deg,
+            #16a34a,
+            #22c55e
+        );
+
+}
+
+
+.pending-card{
+
+    background:
+        linear-gradient(
+            135deg,
+            #f97316,
+            #ef4444
+        );
+
+}
+
+
+/* SUBMISSIONS */
+
+.section{
+
+    background:white;
+
+    border-radius:24px;
+
+    padding:28px;
+
+    box-shadow:
+        0 10px 28px
+        rgba(0,0,0,.08);
+
+}
+
+
+.section h2{
+
+    color:#0f172a;
+
+    margin-bottom:20px;
+
+}
+
+
+.submission{
+
+    border:1px solid #e2e8f0;
+
+    border-radius:18px;
+
+    padding:20px;
+
+    margin-bottom:15px;
+
+    background:#f8fbff;
+
+}
+
+
+.student-info{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+
+.student-name{
+
+    font-size:18px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+}
+
+
+.student-details{
+
+    color:#64748b;
+
+    margin-top:5px;
+
+    font-size:14px;
+
+}
+
+
+.passage-name{
+
+    color:#0f4cdb;
+
+    font-weight:600;
+
+    margin-top:8px;
+
+}
+
+
+.status{
+
+    padding:8px 14px;
+
+    border-radius:20px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+}
+
+
+.completed{
+
+    background:#dcfce7;
+
+    color:#15803d;
+
+}
+
+
+.pending{
+
+    background:#fee2e2;
+
+    color:#dc2626;
+
+}
+
+
+.empty{
+
+    text-align:center;
+
+    padding:45px 20px;
+
+    color:#64748b;
+
+}
+
+
+.loading{
+
+    text-align:center;
+
+    padding:30px;
+
+    color:#64748b;
+
+}
+
+
+.error{
+
+    text-align:center;
+
+    padding:30px;
+
+    color:#dc2626;
+
+}
+
+
+@media(max-width:700px){
+
+    body{
+
+        padding:15px;
+
+    }
+
+
+    .stats{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    .student-info{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+
+    .header-top{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="header-top">
+
+            <div>
+
+                <h1>
+                    👩‍🏫 TRACE Teacher Dashboard
+                </h1>
+
+                <p>
+                    Reading Assessment & Student Progress
+                </p>
+
+            </div>
+
+
+            <button
+                class="logout-btn"
+                id="logoutBtn"
+            >
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ASSIGNED CLASS -->
+
+    <div class="assignment-box">
+
+        <h2>
+            📚 My Assigned Class
+        </h2>
+
+
+        <div
+            id="assignmentInfo"
+            class="loading"
+        >
+
+            Loading assignment...
+
+        </div>
+
+    </div>
+
+
+    <!-- STATISTICS -->
+
+    <div class="stats">
+
+        <div class="stat-card students-card">
+
+            <h3>
+                👥 Students
+            </h3>
+
+            <div
+                class="number"
+                id="studentCount"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card completed-card">
+
+            <h3>
+                ✅ Completed
+            </h3>
+
+            <div
+                class="number"
+                id="completedCount"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card pending-card">
+
+            <h3>
+                ⏳ Pending
+            </h3>
+
+            <div
+                class="number"
+                id="pendingCount"
+            >
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUBMISSIONS -->
+
+    <div class="section">
+
+        <h2>
+            📚 Student Reading Submissions
+        </h2>
+
+
+        <div id="submissionList">
+
+            <div class="loading">
+                Loading student submissions...
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script type="module">
+
+import { db } from "../firebase/firebase.js";
+
+
+import {
+
+    collection,
+    getDocs
+
+} from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+/* =====================================================
+   LOGIN CHECK
+===================================================== */
+
+const teacherId =
+    localStorage.getItem(
+        "traceTeacherId"
+    );
+
+
+if(!teacherId){
+
+    window.location.href =
+        "teacher-login.html";
+
+}
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const studentCount =
+    document.getElementById(
+        "studentCount"
+    );
+
+
+const completedCount =
+    document.getElementById(
+        "completedCount"
+    );
+
+
+const pendingCount =
+    document.getElementById(
+        "pendingCount"
+    );
+
+
+const submissionList =
+    document.getElementById(
+        "submissionList"
+    );
+
+
+const assignmentInfo =
+    document.getElementById(
+        "assignmentInfo"
+    );
+
+
+/* =====================================================
+   LOAD TEACHER DATA
+===================================================== */
+
+async function loadTeacherDashboard(){
+
+    try{
+
+        /* ============================================
+           GET ALL ASSIGNMENTS FOR THIS TEACHER
+        ============================================ */
+
+        const assignmentSnapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "teacherAssignments"
+                )
+            );
+
+
+        const assignments =
+            assignmentSnapshot.docs
+
+                .map(item => ({
+
+                    id: item.id,
+
+                    ...item.data()
+
+                }))
+
+                .filter(assignment =>
+
+                    String(
+                        assignment.teacherId || ""
+                    ).trim() ===
+
+                    String(
+                        teacherId || ""
+                    ).trim()
+
+                );
+
+
+        /* ============================================
+           NO ASSIGNMENTS
+        ============================================ */
+
+        if(assignments.length === 0){
+
+            assignmentInfo.innerHTML = `
+
+                <div class="error">
+
+                    ❌ No class has been
+                    assigned to this teacher yet.
+
+                </div>
+
+            `;
+
+            studentCount.innerText = 0;
+
+            completedCount.innerText = 0;
+
+            pendingCount.innerText = 0;
+
+            submissionList.innerHTML = `
+
+                <div class="empty">
+
+                    No students available.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        /* ============================================
+           SHOW ALL ASSIGNED CLASSES & SUBJECTS
+        ============================================ */
+
+        assignmentInfo.innerHTML = `
+
+            <div style="width:100%;">
+
+                <label style="
+                    display:block;
+                    margin-bottom:10px;
+                    font-weight:600;
+                    color:#0f172a;
+                ">
+
+                    📚 Select Class & Subject
+
+                </label>
+
+
+                <select
+                    id="assignmentSelect"
+                    style="
+                        width:100%;
+                        padding:12px 15px;
+                        border:1px solid #cbd5e1;
+                        border-radius:12px;
+                        font-size:15px;
+                        background:white;
+                        cursor:pointer;
+                    "
+                >
+
+                    ${assignments.map(
+                        (assignment,index) => `
+
+                            <option value="${index}">
+
+                                Class ${
+                                    assignment.class || ""
+                                }
+                                • Section ${
+                                    assignment.section || ""
+                                }
+                                • ${
+                                    assignment.subject ||
+                                    "English"
+                                }
+
+                            </option>
+
+                        `
+                    ).join("")}
+
+                </select>
+
+            </div>
+
+        `;
+
+
+        /* ============================================
+           FUNCTION TO LOAD SELECTED ASSIGNMENT
+        ============================================ */
+
+        async function loadSelectedAssignment(
+            selectedIndex
+        ){
+
+            const assignment =
+                assignments[selectedIndex];
+
+
+            if(!assignment) return;
+
+
+            const assignedClass =
+                String(
+                    assignment.class || ""
+                ).trim();
+
+
+            const assignedSection =
+                String(
+                    assignment.section || ""
+                )
+                .trim()
+                .toUpperCase();
+
+
+            const assignedSubject =
+                assignment.subject ||
+                "English";
+
+
+            /* ========================================
+               SHOW SELECTED ASSIGNMENT
+            ======================================== */
+
+            /* ========================================
+               LOAD STUDENTS
+            ======================================== */
+
+            const studentsSnapshot =
+                await getDocs(
+                    collection(
+                        db,
+                        "students"
+                    )
+                );
+
+
+            const students =
+                studentsSnapshot.docs
+
+                    .map(item => ({
+
+                        id: item.id,
+
+                        ...item.data()
+
+                    }))
+
+                    .filter(student =>
+
+                        String(
+                            student.class || ""
+                        ).trim() ===
+                        assignedClass
+
+                        &&
+
+                        String(
+                            student.section || ""
+                        )
+                        .trim()
+                        .toUpperCase() ===
+                        assignedSection
+
+                    );
+
+
+            studentCount.innerText =
+                students.length;
+
+
+            /* ========================================
+               LOAD SUBMISSIONS
+            ======================================== */
+
+            const submissionsSnapshot =
+                await getDocs(
+                    collection(
+                        db,
+                        "submissions"
+                    )
+                );
+
+
+            const submissions =
+                submissionsSnapshot.docs
+
+                    .map(item => ({
+
+                        id: item.id,
+
+                        ...item.data()
+
+                    }))
+
+                    .filter(submission =>
+
+                        String(
+                            submission.class || ""
+                        ).trim() ===
+                        assignedClass
+
+                        &&
+
+                        String(
+                            submission.section || ""
+                        )
+                        .trim()
+                        .toUpperCase() ===
+                        assignedSection
+
+                        &&
+
+                        (
+                            !submission.subject
+                            ||
+                            String(
+                                submission.subject
+                            ).trim().toLowerCase() ===
+                            String(
+                                assignedSubject
+                            ).trim().toLowerCase()
+                        )
+
+                    );
+
+
+            /* ========================================
+               COMPLETED STUDENTS
+            ======================================== */
+
+            const completedStudentIds =
+                new Set();
+
+
+            submissions.forEach(
+                submission => {
+
+                    const id =
+                        submission.studentId ||
+                        submission.studentName;
+
+
+                    if(id){
+
+                        completedStudentIds.add(
+                            String(id)
+                        );
+
+                    }
+
+                }
+            );
+
+
+            completedCount.innerText =
+                completedStudentIds.size;
+
+
+            pendingCount.innerText =
+                Math.max(
+                    students.length -
+                    completedStudentIds.size,
+                    0
+                );
+
+
+            /* ========================================
+               DISPLAY SUBMISSIONS
+            ======================================== */
+
+           displaySubmissions(
+    submissions,
+    students
+);
+
+        }
+
+
+        /* ============================================
+           SELECT CHANGE
+        ============================================ */
+
+        const assignmentSelect =
+            document.getElementById(
+                "assignmentSelect"
+            );
+
+
+        assignmentSelect.addEventListener(
+            "change",
+            function(){
+
+                loadSelectedAssignment(
+                    Number(
+                        this.value
+                    )
+                );
+
+            }
+        );
+
+
+        /* ============================================
+           LOAD FIRST ASSIGNMENT
+        ============================================ */
+
+        await loadSelectedAssignment(0);
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Teacher dashboard error:",
+            error
+        );
+
+
+        submissionList.innerHTML = `
+
+            <div class="error">
+
+                ❌ Unable to load
+                teacher dashboard.
+
+                <br><br>
+
+                ${error.message}
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+/* =====================================================
+   DISPLAY SUBMISSIONS
+===================================================== */
+
+/* =====================================================
+   DISPLAY ALL STUDENTS
+===================================================== */
+
+function displaySubmissions(
+    submissions,
+    students
+){
+
+    submissionList.innerHTML = "";
+
+
+    /* ============================================
+       Create map of latest submission per student
+    ============================================ */
+
+    const latestByStudent = new Map();
+
+
+    submissions.forEach(
+        submission => {
+
+            const studentKey =
+                submission.studentId ||
+                submission.studentName;
+
+
+            if(!studentKey){
+                return;
+            }
+
+
+            latestByStudent.set(
+                String(studentKey),
+                submission
+            );
+
+        }
+    );
+
+
+    /* ============================================
+       NO STUDENTS
+    ============================================ */
+
+    if(
+        !students ||
+        students.length === 0
+    ){
+
+        submissionList.innerHTML = `
+
+            <div class="empty">
+
+                👥 No students found
+                for this class.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    /* ============================================
+       DISPLAY EVERY STUDENT
+    ============================================ */
+
+    students.forEach(
+        student => {
+
+            const studentId =
+                String(
+                    student.admissionNo ||
+                    student.admnNo ||
+                    student.id ||
+                    ""
+                );
+
+
+            const submission =
+                latestByStudent.get(
+                    studentId
+                );
+
+
+            /*
+               Some submissions may use
+               student name instead of ID.
+            */
+
+            let matchedSubmission =
+                submission;
+
+
+            if(!matchedSubmission){
+
+                matchedSubmission =
+                    submissions.find(
+                        item =>
+
+                            String(
+                                item.studentId ||
+                                ""
+                            ) ===
+                            String(
+                                student.admissionNo ||
+                                student.admnNo ||
+                                ""
+                            )
+
+                            ||
+
+                            String(
+                                item.studentName ||
+                                ""
+                            ).trim().toLowerCase() ===
+
+                            String(
+                                student.name ||
+                                ""
+                            ).trim().toLowerCase()
+                    );
+
+            }
+
+
+            /* ==================================
+               STATUS
+            ================================== */
+
+            const isCompleted =
+                !!matchedSubmission;
+
+
+            const statusHTML =
+                isCompleted
+
+                ?
+
+                `
+
+                    <div class="status completed">
+
+                        ✅ Completed
+
+                    </div>
+
+                `
+
+                :
+
+                `
+
+                    <div class="status pending">
+
+                        ⏳ Pending
+
+                    </div>
+
+                `;
+
+
+            /* ==================================
+               CREATE STUDENT CARD
+            ================================== */
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "submission";
+
+
+            item.innerHTML = `
+
+                <div class="student-info">
+
+                    <div>
+
+                        <div class="student-name">
+
+                            👤 ${
+                                student.name ||
+                                "Student"
+                            }
+
+                        </div>
+
+
+                        <div class="student-details">
+
+                            Admission No.:
+                            ${
+                                student.admissionNo ||
+                                student.admnNo ||
+                                "-"
+                            }
+
+                            &nbsp; • &nbsp;
+
+                            Roll No.:
+                            ${
+                                student.rollNo ||
+                                student.roll ||
+                                "-"
+                            }
+
+                        </div>
+
+
+                        <div class="student-details">
+
+                            Class ${
+                                student.class ||
+                                ""
+                            }
+
+                            • Section ${
+                                student.section ||
+                                ""
+                            }
+
+                        </div>
+
+
+                        ${
+                            isCompleted
+
+                            ?
+
+                            `
+
+                                <div class="passage-name">
+
+                                    📖 ${
+                                        matchedSubmission.passageTitle ||
+                                        "Reading Passage"
+                                    }
+
+                                </div>
+
+                            `
+
+                            :
+
+                            `
+
+                                <div class="passage-name">
+
+                                    📖 Assigned Reading
+
+                                </div>
+
+                            `
+
+                        }
+
+                    </div>
+
+
+                    ${statusHTML}
+
+                </div>
+
+            `;
+
+
+            submissionList.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+document
+    .getElementById(
+        "logoutBtn"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            localStorage.removeItem(
+                "traceTeacherId"
+            );
+
+            localStorage.removeItem(
+                "traceTeacherLoginId"
+            );
+
+            localStorage.removeItem(
+                "traceTeacherName"
+            );
+
+
+            window.location.href =
+                "teacher-login.html";
+
+        }
+    );
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadTeacherDashboard();
+
+</script>
+
+</body>
+
+</html>

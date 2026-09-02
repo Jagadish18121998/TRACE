@@ -1,0 +1,933 @@
+/* =========================================
+   TRACE ADMIN DASHBOARD
+   Part 2A
+========================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI",sans-serif;
+}
+
+body{
+
+    background:#EEF4FB;
+
+    overflow-x:hidden;
+
+}
+
+/* Dashboard */
+
+.dashboard{
+
+    display:flex;
+
+    min-height:100vh;
+
+}
+
+/* =======================
+   PREMIUM SIDEBAR
+======================= */
+
+.sidebar{
+
+    width:250px;
+
+    height:100vh;
+
+    background:linear-gradient(180deg,#0A3D91,#1675E0);
+
+    display:flex;
+
+    flex-direction:column;
+
+    color:#fff;
+
+    position:sticky;
+
+    top:0;
+
+    box-shadow:5px 0 25px rgba(0,0,0,.15);
+
+}
+
+/* ---------- Logo ---------- */
+
+.logo{
+
+    padding:28px 25px 18px;
+
+    border-bottom:1px solid rgba(255,255,255,.12);
+
+}
+
+.logo h1{
+
+    font-size:42px;
+
+    letter-spacing:2px;
+
+    font-weight:700;
+
+}
+
+.logo p{
+
+    margin-top:8px;
+
+    font-size:13px;
+
+    line-height:1.5;
+
+    opacity:.9;
+
+}
+
+/* ---------- Profile ---------- */
+
+.profile-card{
+
+    margin:20px 15px;
+
+    padding:15px;
+
+    border-radius:18px;
+
+    background:rgba(255,255,255,.12);
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.profile-image{
+
+    width:55px;
+
+    height:55px;
+
+    border-radius:50%;
+
+    background:white;
+
+    color:#1565C0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:28px;
+
+}
+
+.profile-card h3{
+
+    font-size:17px;
+
+}
+
+.profile-card p{
+
+    font-size:13px;
+
+    opacity:.85;
+
+}
+
+.online{
+
+    color:#72F28A;
+
+    font-size:12px;
+
+}
+
+/* ---------- Menu ---------- */
+
+.menu{
+
+    flex:1;
+
+    padding:10px 12px;
+
+    overflow-y:auto;
+
+}
+
+.menu button{
+
+    width:100%;
+
+    height:52px;
+
+    border:none;
+
+    background:none;
+
+    color:white;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:0 18px;
+
+    margin-bottom:8px;
+
+    border-radius:14px;
+
+    font-size:15px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.menu button i{
+
+    width:24px;
+
+    text-align:center;
+
+}
+
+.menu button:hover{
+
+    background:rgba(255,255,255,.12);
+
+}
+
+.menu button.active{
+
+    background:white;
+
+    color:#1565C0;
+
+    font-weight:600;
+
+    box-shadow:0 8px 18px rgba(0,0,0,.15);
+
+}
+
+/* ---------- Footer ---------- */
+
+.sidebar-footer{
+
+    margin:15px;
+
+    padding:20px;
+
+    border-top:1px solid rgba(255,255,255,.15);
+
+    text-align:center;
+
+}
+
+.sidebar-footer h3{
+
+    font-size:18px;
+
+    margin-bottom:6px;
+
+}
+
+.sidebar-footer p{
+
+    font-size:13px;
+
+    opacity:.85;
+
+}
+
+.sidebar-footer .book{
+
+    font-size:42px;
+
+    margin-bottom:10px;
+
+}
+
+.sidebar-footer{
+
+    margin-top:35px;
+
+    text-align:center;
+
+    font-size:14px;
+
+    opacity:.85;
+
+}
+
+/* =======================
+   MAIN
+======================= */
+
+.main{
+
+    flex:1;
+
+    padding:35px;
+
+}
+
+/* =======================
+   TOP BAR
+======================= */
+
+.topbar{
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:25px 35px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+    margin-bottom:30px;
+
+}
+
+.topbar h1{
+
+    color:#1565C0;
+
+    font-size:34px;
+
+}
+
+.topbar p{
+
+    color:#777;
+
+    margin-top:8px;
+
+}
+
+.top-icons{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.top-icons button{
+
+    width:52px;
+
+    height:52px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#EEF4FB;
+
+    cursor:pointer;
+
+    font-size:20px;
+
+    transition:.3s;
+
+}
+
+.top-icons button:hover{
+
+    background:#1565C0;
+
+    color:white;
+
+}
+
+.date{
+
+    background:#EEF4FB;
+
+    padding:12px 18px;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+}
+
+/* =======================
+   SUMMARY CARDS
+======================= */
+
+.summary{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:22px;
+
+    margin-bottom:30px;
+
+}
+
+.summary-card{
+
+    color:white;
+
+    border-radius:22px;
+
+    padding:28px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+    position:relative;
+
+    overflow:hidden;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+}
+
+.summary-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 20px 35px rgba(0,0,0,.18);
+
+}
+
+.summary-card i{
+
+    font-size:42px;
+
+}
+
+.summary-card h2{
+
+    font-size:40px;
+
+    margin-bottom:8px;
+
+}
+
+.summary-card p{
+
+    font-size:16px;
+
+}
+
+.summary-card::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:140px;
+
+    height:140px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.12);
+
+    top:-40px;
+
+    right:-40px;
+
+}
+
+/* Card Colors */
+
+.blue{
+
+    background:linear-gradient(135deg,#2563EB,#3B82F6);
+
+}
+
+.green{
+
+    background:linear-gradient(135deg,#16A34A,#22C55E);
+
+}
+
+.orange{
+
+    background:linear-gradient(135deg,#EA580C,#FB923C);
+
+}
+
+.purple{
+
+    background:linear-gradient(135deg,#7C3AED,#A855F7);
+
+}
+/* =========================================
+   TRACE ADMIN DASHBOARD
+   Part 2B
+========================================= */
+
+/* ==========================
+   DASHBOARD GRID
+========================== */
+
+.dashboard-grid{
+
+    display:grid;
+
+    grid-template-columns:2fr 1fr;
+
+    gap:25px;
+
+    margin-bottom:30px;
+
+}
+
+.panel{
+
+    background:white;
+
+    border-radius:22px;
+
+    padding:25px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+.panel:hover{
+
+    transform:translateY(-5px);
+
+}
+
+.large{
+
+    min-height:360px;
+
+}
+
+.panel h3{
+
+    color:#1565C0;
+
+    margin-bottom:20px;
+
+    font-size:22px;
+
+}
+
+/* Charts */
+
+canvas{
+
+    width:100% !important;
+
+    height:280px !important;
+
+}
+
+/* ==========================
+   ACTIVITY
+========================== */
+
+.activity-list{
+
+    list-style:none;
+
+}
+
+.activity-list li{
+
+    padding:15px;
+
+    margin-bottom:12px;
+
+    border-left:5px solid #1565C0;
+
+    background:#F7FAFD;
+
+    border-radius:10px;
+
+    color:#555;
+
+    transition:.3s;
+
+}
+
+.activity-list li:hover{
+
+    background:#EEF4FB;
+
+}
+
+/* ==========================
+   QUICK BUTTONS
+========================== */
+
+.quick-buttons{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:15px;
+
+}
+
+.quick-buttons button{
+
+    border:none;
+
+    padding:16px;
+
+    border-radius:14px;
+
+    background:#1565C0;
+
+    color:white;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.quick-buttons button:hover{
+
+    background:#0D47A1;
+
+    transform:translateY(-4px);
+
+}
+
+/* ==========================
+   CONTENT AREA
+========================== */
+
+#content{
+
+    margin-top:30px;
+
+    background:white;
+
+    border-radius:22px;
+
+    padding:30px;
+
+    min-height:450px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+}
+
+/* ==========================
+   FOOTER
+========================== */
+
+footer{
+
+    margin-top:35px;
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:18px 30px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    color:#666;
+
+    font-size:15px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.06);
+
+}
+
+/* ==========================
+   SCROLLBAR
+========================== */
+
+::-webkit-scrollbar{
+
+    width:10px;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#1565C0;
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#EEF4FB;
+
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media(max-width:1200px){
+
+.summary{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+.dashboard-grid{
+
+    grid-template-columns:1fr;
+
+}
+
+}
+
+@media(max-width:900px){
+
+.dashboard{
+
+    flex-direction:column;
+
+}
+
+.sidebar{
+
+    width:100%;
+
+}
+
+.topbar{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:20px;
+
+}
+
+.top-icons{
+
+    width:100%;
+
+    justify-content:space-between;
+
+}
+
+.quick-buttons{
+
+    grid-template-columns:1fr;
+
+}
+
+}
+
+@media(max-width:650px){
+
+.summary{
+
+    grid-template-columns:1fr;
+
+}
+
+footer{
+
+    flex-direction:column;
+
+    gap:10px;
+
+    text-align:center;
+
+}
+
+.logo h1{
+
+    font-size:34px;
+
+}
+
+.topbar h1{
+
+    font-size:28px;
+
+}
+
+}
+/* Dynamic Content */
+
+#content{
+    display:none;
+    width:100%;
+    animation:fadeIn .3s ease;
+}
+
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+/* =========================
+   FULL PAGE MODULE LAYOUT
+========================= */
+
+#content {
+    width: 100%;
+    min-height: calc(100vh - 180px);
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+/* Main content panel */
+.form-box,
+.panel {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 24px;
+    box-sizing: border-box;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 24px;
+}
+
+/* Form layout */
+.form-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+}
+
+.form-box label {
+    font-weight: 600;
+    color: #1e3a8a;
+}
+
+.form-box select,
+.form-box input {
+    min-width: 180px;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 15px;
+    background: #f8fafc;
+}
+
+/* Buttons */
+.form-box button,
+.quick-buttons button,
+table button {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.form-box button:hover,
+.quick-buttons button:hover,
+table button:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+}
+
+/* Beautiful tables */
+.class-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.class-table thead {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+}
+
+.class-table th,
+.class-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.class-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* Page title */
+#content h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #1e3a8a;
+}
+
+/* Make dashboard area use full width */
+.main {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-box {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-box select,
+    .form-box input,
+    .form-box button {
+        width: 100%;
+    }
+}

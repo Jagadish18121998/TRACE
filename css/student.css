@@ -1,0 +1,556 @@
+/* =================================
+   TRACE STUDENT PORTAL - FULL CSS
+================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* =================================
+   BODY BACKGROUND
+================================= */
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #dff6ff 0%, #eef8ff 50%, #ffffff 100%);
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Floating circles */
+body::before,
+body::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    z-index: 0;
+    filter: blur(8px);
+}
+
+body::before {
+    width: 320px;
+    height: 320px;
+    background: rgba(0, 180, 255, 0.18);
+    top: -80px;
+    left: -60px;
+}
+
+body::after {
+    width: 260px;
+    height: 260px;
+    background: rgba(15, 76, 219, 0.15);
+    bottom: -70px;
+    right: -50px;
+}
+
+/* Optional floating bubbles */
+.bg-bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(4px);
+    animation: float 8s ease-in-out infinite;
+    z-index: 0;
+}
+
+.bubble1 {
+    width: 90px;
+    height: 90px;
+    top: 18%;
+    right: 12%;
+}
+
+.bubble2 {
+    width: 60px;
+    height: 60px;
+    bottom: 20%;
+    left: 14%;
+    animation-delay: 2s;
+}
+
+.bubble3 {
+    width: 40px;
+    height: 40px;
+    top: 58%;
+    right: 26%;
+    animation-delay: 4s;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+/* =================================
+   LOGIN PAGE
+================================= */
+
+.login-container {
+    width: 100%;
+    max-width: 450px;
+    margin: 40px auto;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(12px);
+    border-radius: 28px;
+    padding: 45px 35px;
+    box-shadow: 0 20px 45px rgba(15, 76, 219, 0.15);
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.logo i {
+    font-size: 56px;
+    color: #0f4cdb;
+    margin-bottom: 12px;
+}
+
+.logo h1 {
+    font-size: 2.3rem;
+    color: #0f4cdb;
+    margin-bottom: 6px;
+    font-weight: 800;
+}
+
+.logo p {
+    color: #64748b;
+    font-size: 15px;
+    margin-bottom: 28px;
+}
+
+.login-title h2 {
+    color: #1e293b;
+    font-size: 1.7rem;
+    margin-bottom: 8px;
+}
+
+.login-title p {
+    color: #64748b;
+    margin-bottom: 26px;
+    font-size: 14px;
+}
+
+.form-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px 15px;
+    border: 1px solid #dbe4f0;
+    border-radius: 14px;
+    background: #f8fbff;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    border-color: #0f4cdb;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(15, 76, 219, 0.12);
+    outline: none;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #0f4cdb, #00b4ff);
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(15, 76, 219, 0.28);
+}
+
+.footer-text {
+    margin-top: 24px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* =================================
+   STUDENT DASHBOARD
+================================= */
+
+.student-dashboard {
+    width: 100%;
+    max-width: 1500px;
+    margin: 10px auto;
+    padding: 30px 40px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Topbar */
+.topbar {
+    background: linear-gradient(135deg, #2563eb, #06b6d4);
+    color: white;
+    padding: 28px 36px;
+    border-radius: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    box-shadow: 0 12px 30px rgba(37, 99, 235, 0.25);
+}
+
+.topbar h1 {
+    font-size: 2rem;
+    margin-bottom: 6px;
+}
+
+.topbar p {
+    opacity: 0.9;
+    font-size: 15px;
+}
+
+.logout-btn {
+    background: white;
+    color: #2563eb;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.logout-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Student info */
+.student-info {
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 24px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+}
+
+.avatar {
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #06b6d4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 30px;
+}
+
+.student-info h2 {
+    color: #0f172a;
+    margin-bottom: 6px;
+    font-size: 1.5rem;
+}
+
+.student-info p {
+    color: #64748b;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI",sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#e0f7ff,#f8fbff);
+    min-height:100vh;
+    padding:14px;
+}
+
+.dashboard{
+    width:100%;
+    max-width:430px;   /* perfect for mobile */
+    margin:auto;
+}
+
+/* ========== HEADER ========== */
+
+.topbar{
+    background:linear-gradient(135deg,#0f4cdb,#00b4ff);
+    color:white;
+    padding:20px;
+    border-radius:22px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    box-shadow:0 8px 22px rgba(0,0,0,0.12);
+    margin-bottom:18px;
+}
+
+.topbar h1{
+    font-size:1.5rem;
+    margin-bottom:6px;
+}
+
+.topbar p{
+    font-size:13px;
+    opacity:0.95;
+}
+
+.logout-btn{
+    background:white;
+    color:#0f4cdb;
+    border:none;
+    padding:8px 14px;
+    border-radius:10px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+}
+
+/* ========== STUDENT INFO ========== */
+
+.student-info{
+    background:white;
+    border-radius:20px;
+    padding:18px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.06);
+    margin-bottom:20px;
+}
+
+.avatar{
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#0f4cdb,#00b4ff);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:26px;
+}
+
+.student-info h2{
+    font-size:1.2rem;
+    color:#0f172a;
+    margin-bottom:4px;
+}
+
+.student-info p{
+    color:#64748b;
+    font-size:14px;
+}
+
+/* ========== CARDS ========== */
+
+.cards{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:16px;
+    margin-bottom:22px;
+}
+
+.card{
+    border-radius:22px;
+    padding:22px;
+    color:white;
+    min-height:150px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    box-shadow:0 10px 24px rgba(0,0,0,0.12);
+}
+
+.card i{
+    font-size:28px;
+    margin-bottom:10px;
+}
+
+.card h3{
+    font-size:15px;
+    margin-bottom:10px;
+    font-weight:600;
+}
+
+.card .number{
+    font-size:2rem;
+    font-weight:700;
+}
+
+.blue{
+    background:linear-gradient(135deg,#2563eb,#38bdf8);
+}
+
+.green{
+    background:linear-gradient(135deg,#16a34a,#4ade80);
+}
+
+.orange{
+    background:linear-gradient(135deg,#ea580c,#fb923c);
+}
+
+/* ========== TASKS ========== */
+
+.tasks-section{
+    background:white;
+    border-radius:22px;
+    padding:20px;
+    box-shadow:0 8px 22px rgba(0,0,0,0.06);
+}
+
+.tasks-section h2{
+    font-size:1.2rem;
+    color:#0f172a;
+    margin-bottom:18px;
+}
+
+.task-item{
+    background:#f8fbff;
+    border:1px solid #e2e8f0;
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:14px;
+}
+
+.task-item h4{
+    color:#0f172a;
+    font-size:15px;
+    margin-bottom:6px;
+}
+
+.task-item p{
+    color:#64748b;
+    font-size:13px;
+    margin-bottom:12px;
+}
+
+.read-btn{
+    width:100%;
+    border:none;
+    border-radius:12px;
+    padding:12px;
+    background:linear-gradient(135deg,#0f4cdb,#00b4ff);
+    color:white;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+}
+
+.read-btn i{
+    margin-right:6px;
+}
+
+/* ========== TABLET / LAPTOP ========== */
+
+@media(min-width:700px){
+
+    .dashboard{
+        max-width:900px;
+    }
+
+    .cards{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .task-item{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+    }
+
+    .task-item p{
+        margin-bottom:0;
+    }
+
+    .read-btn{
+        width:auto;
+        min-width:150px;
+    }
+}
+.student-info {
+    width: 100%;
+    min-height: 120px;
+}
+.task-item.completed{
+    border:2px solid #16a34a;
+    background:#ecfdf5;
+}
+
+.task-item.completed h4{
+    color:#15803d;
+}
+@media(max-width:768px){
+
+    .task-item{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:12px;
+    }
+
+    .read-btn{
+        width:100%;
+    }
+}
+.reader-container{
+    max-width:800px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:24px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+}
+
+#passageContent{
+    font-size:18px;
+    line-height:1.8;
+    color:#1e293b;
+    margin:25px 0;
+}
+
+.complete-btn,
+.back-btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    margin-top:12px;
+}
+
+.complete-btn{
+    background:#16a34a;
+    color:white;
+}
+
+.back-btn{
+    background:#0f4cdb;
+    color:white;
+}

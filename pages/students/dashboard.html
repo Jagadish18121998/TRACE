@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRACE Student Dashboard</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:"Segoe UI", sans-serif;
+        }
+
+        body{
+            background:linear-gradient(135deg,#e0f2fe,#f8fbff,#ffffff);
+            min-height:100vh;
+            padding:30px;
+        }
+
+        .dashboard{
+            width:100%;
+            max-width:1200px;
+            margin:auto;
+        }
+
+        /* ================= HEADER ================= */
+
+        .topbar{
+            background:linear-gradient(135deg,#0f4cdb,#00b4ff);
+            color:white;
+            padding:30px;
+            border-radius:26px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            box-shadow:0 12px 30px rgba(0,0,0,0.15);
+            margin-bottom:25px;
+        }
+
+        .topbar h1{
+            font-size:2rem;
+            margin-bottom:8px;
+        }
+
+        .topbar p{
+            opacity:0.95;
+            font-size:15px;
+        }
+
+        .logout-btn{
+            background:white;
+            color:#0f4cdb;
+            border:none;
+            padding:12px 22px;
+            border-radius:12px;
+            font-weight:600;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .logout-btn:hover{
+            transform:translateY(-2px);
+            box-shadow:0 8px 18px rgba(255,255,255,0.3);
+        }
+
+        /* ================= STUDENT INFO ================= */
+
+        .student-info{
+            background:white;
+            padding:22px;
+            border-radius:24px;
+            display:flex;
+            align-items:center;
+            gap:18px;
+            margin-bottom:28px;
+            box-shadow:0 8px 22px rgba(0,0,0,0.06);
+        }
+
+        .avatar{
+            width:80px;
+            height:80px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#0f4cdb,#00b4ff);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:white;
+            font-size:32px;
+        }
+
+        .student-info h2{
+            color:#0f172a;
+            margin-bottom:6px;
+            font-size:1.5rem;
+        }
+
+        .student-info p{
+            color:#64748b;
+            font-size:15px;
+        }
+
+        /* ================= CARDS ================= */
+
+        .cards{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+            gap:22px;
+            margin-bottom:32px;
+        }
+
+        .card{
+            padding:28px;
+            border-radius:24px;
+            color:white;
+            min-height:180px;
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
+            box-shadow:0 12px 28px rgba(0,0,0,0.12);
+            transition:0.3s;
+        }
+
+        .card:hover{
+            transform:translateY(-5px);
+        }
+
+        .card i{
+            font-size:34px;
+            margin-bottom:14px;
+        }
+
+        .card h3{
+            font-size:16px;
+            margin-bottom:12px;
+            font-weight:600;
+        }
+
+        .card .number{
+            font-size:2.5rem;
+            font-weight:700;
+        }
+
+        .blue{
+            background:linear-gradient(135deg,#2563eb,#38bdf8);
+        }
+
+        .green{
+            background:linear-gradient(135deg,#16a34a,#4ade80);
+        }
+
+        .orange{
+            background:linear-gradient(135deg,#ea580c,#fb923c);
+        }
+
+        /* ================= TASK PANEL ================= */
+
+        .tasks-section{
+            background:white;
+            border-radius:24px;
+            padding:30px;
+            box-shadow:0 10px 24px rgba(0,0,0,0.06);
+        }
+
+        .tasks-section h2{
+            color:#0f172a;
+            margin-bottom:24px;
+            font-size:1.4rem;
+        }
+
+        .task-item{
+    background:#f8fbff;
+    border:1px solid #e2e8f0;
+    border-radius:18px;
+    padding:18px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:16px;
+    transition:0.3s;
+}
+
+.task-item:hover{
+    background:#f0f7ff;
+    transform:translateY(-2px);
+}
+
+.task-item.completed{
+    border:2px solid #16a34a;
+    background:#ecfdf5;
+}
+
+.task-item.completed h4{
+    color:#15803d;
+}
+
+        .task-item h4{
+            color:#0f172a;
+            margin-bottom:5px;
+            font-size:1rem;
+        }
+
+        .task-item p{
+            color:#64748b;
+            font-size:14px;
+        }
+
+        .read-btn{
+            background:linear-gradient(135deg,#0f4cdb,#00b4ff);
+            color:white;
+            border:none;
+            padding:11px 20px;
+            border-radius:12px;
+            font-weight:600;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .read-btn:hover{
+            transform:scale(1.05);
+            box-shadow:0 10px 22px rgba(15,76,219,0.25);
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media(max-width:768px){
+
+            body{
+                padding:15px;
+            }
+
+            .topbar{
+                flex-direction:column;
+                text-align:center;
+                gap:18px;
+            }
+
+            .student-info{
+                flex-direction:column;
+                text-align:center;
+            }
+
+            .task-item{
+                flex-direction:column;
+                text-align:center;
+                gap:12px;
+            }
+
+            .topbar h1{
+                font-size:1.6rem;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- ================= HEADER ================= -->
+
+    <div class="topbar">
+
+        <div>
+            <h1>👋 Welcome to TRACE</h1>
+            <p>Student Reading Assessment Dashboard</p>
+        </div>
+
+        <button class="logout-btn"
+        onclick="logout()">
+
+    <i class="fa-solid fa-right-from-bracket"></i>
+    Logout
+<button class="logout-btn"
+        onclick="resetProgress()"
+        style="background:#ef4444;color:white;margin-left:10px;">
+
+    <i class="fa-solid fa-rotate-left"></i>
+    Reset
+
+</button>
+</button>
+
+    </div>
+
+    <!-- ================= STUDENT INFO ================= -->
+
+    <div class="student-info">
+
+        <div class="avatar">
+            <i class="fa-solid fa-user-graduate"></i>
+        </div>
+
+        <div>
+    <h2 id="studentName">Student Name</h2>
+    <p id="studentClass">Class • Section</p>
+</div>
+
+    </div>
+
+    <!-- ================= DASHBOARD CARDS ================= -->
+
+    <div class="cards">
+
+        <div class="card blue">
+
+            <i class="fa-solid fa-book-open"></i>
+
+            <div>
+                <h3>Assigned Passages</h3>
+                <div class="number" id="assignedCount">2</div>
+            </div>
+
+        </div>
+
+        <div class="card green">
+
+    <i class="fa-solid fa-chart-line"></i>
+
+    <div>
+        <h3>Competency Score</h3>
+        <div class="number" id="score">0%</div>
+    </div>
+
+</div>
+
+        <div class="card orange">
+
+            <i class="fa-solid fa-trophy"></i>
+
+            <div>
+                <h3>Passages Completed</h3>
+                <div class="number" id="completed">0</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ================= READING TASKS ================= -->
+
+    <div class="tasks-section">
+
+    <h2>📚 Your Reading Tasks</h2>
+
+    <div id="tasksContainer">
+
+        <p>Loading assigned passages...</p>
+
+    </div>
+
+
+
+</div>
+<script>
+/* =====================================================
+   STUDENT DASHBOARD
+===================================================== */
+
+if(!localStorage.getItem('studentName')){
+    window.location.href = 'student.html';
+}
+
+
+/* =====================================================
+   STUDENT INFORMATION
+===================================================== */
+
+const studentName =
+    localStorage.getItem('studentName') || 'Student Name';
+
+const studentClass =
+    localStorage.getItem('studentClass') || '';
+
+const studentSection =
+    localStorage.getItem('studentSection') || '';
+
+document.getElementById('studentName').innerText =
+    studentName;
+
+document.getElementById('studentClass').innerText =
+    `Class ${studentClass} • Section ${studentSection}`;
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function logout(){
+
+    localStorage.removeItem('studentName');
+    localStorage.removeItem('studentClass');
+    localStorage.removeItem('studentSection');
+    localStorage.removeItem('studentId');
+    localStorage.removeItem('selectedPassage');
+
+    window.location.href = 'student.html';
+}
+
+
+/* =====================================================
+   RESET PROGRESS
+===================================================== */
+
+function resetProgress(){
+
+    const confirmReset =
+        confirm('Reset all reading progress?');
+
+    if(!confirmReset) return;
+
+    localStorage.removeItem('completedPassages');
+    localStorage.removeItem('completedCount');
+
+    alert('🔄 Progress reset successfully!');
+
+    location.reload();
+}
+
+
+/* =====================================================
+   OPEN PASSAGE
+===================================================== */
+
+function openPassage(id){
+
+    localStorage.setItem(
+        'selectedPassage',
+        id
+    );
+
+    window.location.href =
+        'read.html';
+}
+
+
+/* Make function available to buttons */
+
+window.openPassage = openPassage;
+
+
+/* =====================================================
+   FIREBASE - LOAD ASSIGNED PASSAGES
+===================================================== */
+
+import('../../firebase/firebase.js')
+.then(async ({ db }) => {
+
+    const {
+        collection,
+        getDocs,
+        doc,
+        getDoc
+    } = await import(
+        'https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js'
+    );
+
+
+    try {
+
+        const tasksContainer =
+            document.getElementById('tasksContainer');
+
+
+        /* =================================================
+           GET STUDENT CLASS AND SECTION
+        ================================================= */
+
+        const currentClass =
+            String(studentClass)
+                .trim();
+
+
+        const currentSection =
+            String(studentSection)
+                .trim()
+                .toUpperCase();
+
+
+        /* =================================================
+           LOAD ASSIGNMENTS
+        ================================================= */
+
+        const assignmentsSnapshot =
+            await getDocs(
+                collection(
+                    db,
+                    'assignments'
+                )
+            );
+
+
+        const assignedPassageIds = [];
+
+
+        assignmentsSnapshot.forEach(
+            assignmentDoc => {
+
+                const assignment =
+                    assignmentDoc.data();
+
+
+                const assignmentClass =
+                    String(
+                        assignment.class || ''
+                    ).trim();
+
+
+                const assignmentSection =
+                    String(
+                        assignment.section || ''
+                    )
+                    .trim()
+                    .toUpperCase();
+
+
+                const isActive =
+                    assignment.active !== false;
+
+
+                if(
+                    isActive &&
+                    assignmentClass === currentClass &&
+                    assignmentSection === currentSection
+                ){
+
+                    if(
+                        assignment.passageId &&
+                        !assignedPassageIds.includes(
+                            assignment.passageId
+                        )
+                    ){
+
+                        assignedPassageIds.push(
+                            assignment.passageId
+                        );
+
+                    }
+
+                }
+
+            }
+        );
+
+
+        /* =================================================
+           NO ASSIGNMENTS
+        ================================================= */
+
+        if(
+            assignedPassageIds.length === 0
+        ){
+
+            tasksContainer.innerHTML = `
+
+                <div style="
+                    text-align:center;
+                    padding:25px;
+                    color:#64748b;
+                ">
+
+                    📚 No passages assigned yet.
+
+                    <br><br>
+
+                    <small>
+
+                        Class ${currentClass}
+                        •
+                        Section ${currentSection}
+
+                    </small>
+
+                </div>
+
+            `;
+
+
+            document.getElementById(
+                'assignedCount'
+            ).innerText = '0';
+
+
+            document.getElementById(
+                'score'
+            ).innerText = '0%';
+
+
+            return;
+
+        }
+
+
+        /* =================================================
+           LOAD ACTUAL PASSAGES
+        ================================================= */
+
+        const matchingPassages = [];
+
+
+        for(
+            const passageId
+            of assignedPassageIds
+        ){
+
+            const passageRef =
+                doc(
+                    db,
+                    'passages',
+                    passageId
+                );
+
+
+            const passageSnapshot =
+                await getDoc(
+                    passageRef
+                );
+
+
+            if(
+                passageSnapshot.exists()
+            ){
+
+                const passage =
+                    passageSnapshot.data();
+
+
+                /* Only active passages */
+
+                if(
+                    passage.active === true
+                ){
+
+                    matchingPassages.push({
+
+                        id:
+                            passageSnapshot.id,
+
+                        ...passage
+
+                    });
+
+                }
+
+            }
+
+        }
+
+
+        /* =================================================
+           DISPLAY PASSAGES
+        ================================================= */
+
+        tasksContainer.innerHTML = '';
+
+
+        if(
+            matchingPassages.length === 0
+        ){
+
+            tasksContainer.innerHTML = `
+
+                <div style="
+                    text-align:center;
+                    padding:25px;
+                    color:#64748b;
+                ">
+
+                    📚 No active passages assigned yet.
+
+                </div>
+
+            `;
+
+        }
+
+
+        matchingPassages.forEach(
+            passage => {
+
+                const task =
+                    document.createElement(
+                        'div'
+                    );
+
+
+                task.className =
+                    'task-item';
+
+
+                task.id =
+                    passage.id +
+                    'Task';
+
+
+                task.innerHTML = `
+
+                    <div>
+
+                        <h4>
+                            📖 ${
+                                passage.title ||
+                                'Reading Passage'
+                            }
+                        </h4>
+
+                        <p>
+                            Reading Practice
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="read-btn"
+                        id="${passage.id}Btn"
+                    >
+
+                        📖 Read Passage
+
+                    </button>
+
+                `;
+
+
+                /* Open passage */
+
+                task
+                    .querySelector(
+                        '.read-btn'
+                    )
+                    .addEventListener(
+                        'click',
+                        function(){
+
+                            openPassage(
+                                passage.id
+                            );
+
+                        }
+                    );
+
+
+                tasksContainer.appendChild(
+                    task
+                );
+
+            }
+        );
+
+
+        /* =================================================
+           DASHBOARD STATISTICS
+        ================================================= */
+
+        const assignedCount =
+            matchingPassages.length;
+
+
+        document.getElementById(
+            'assignedCount'
+        ).innerText =
+            assignedCount;
+
+
+        /* =================================================
+           COMPLETED PASSAGES
+        ================================================= */
+
+        const completedPassages =
+            JSON.parse(
+                localStorage.getItem(
+                    'completedPassages'
+                )
+            ) || [];
+
+
+        const completedCount =
+            completedPassages.filter(
+                id =>
+                    matchingPassages.some(
+                        passage =>
+                            passage.id === id
+                    )
+            ).length;
+
+
+        document.getElementById(
+            'completed'
+        ).innerText =
+            completedCount;
+
+
+        /* =================================================
+           COMPETENCY SCORE
+        ================================================= */
+
+        const score =
+            assignedCount > 0
+                ? Math.round(
+                    (
+                        completedCount /
+                        assignedCount
+                    ) * 100
+                )
+                : 0;
+
+
+        document.getElementById(
+            'score'
+        ).innerText =
+            score + '%';
+
+
+        /* =================================================
+           HIGHLIGHT COMPLETED
+        ================================================= */
+
+        completedPassages.forEach(
+            id => {
+
+                const task =
+                    document.getElementById(
+                        id + 'Task'
+                    );
+
+
+                if(task){
+
+                    task.classList.add(
+                        'completed'
+                    );
+
+
+                    const title =
+                        task.querySelector(
+                            'h4'
+                        );
+
+
+                    if(
+                        title &&
+                        !title.innerHTML.includes(
+                            '✅'
+                        )
+                    ){
+
+                        title.innerHTML +=
+                            ' ✅';
+
+                    }
+
+
+                    const button =
+                        document.getElementById(
+                            id + 'Btn'
+                        );
+
+
+                    if(button){
+
+                        button.innerText =
+                            '🔄 Read Again';
+
+                    }
+
+                }
+
+            }
+        );
+
+
+    }
+
+
+    catch(error){
+
+        console.error(
+            'Dashboard Firebase error:',
+            error
+        );
+
+
+        document.getElementById(
+            'tasksContainer'
+        ).innerHTML = `
+
+            <p style="
+                text-align:center;
+                color:#dc2626;
+                padding:20px;
+            ">
+
+                ❌ Unable to load assigned passages.
+
+            </p>
+
+        `;
+
+    }
+
+});
+
+/* =====================================================
+   IMPORTANT:
+   The above code loads Firebase passages
+   and updates the dashboard.
+===================================================== */
+
+</script>
+</body>
+</html>

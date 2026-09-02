@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Passage | TRACE</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:"Segoe UI",sans-serif;
+        }
+
+        body{
+            background:#eef5ff;
+            min-height:100vh;
+            padding:20px;
+        }
+
+        .container{
+            max-width:800px;
+            margin:auto;
+            background:white;
+            border-radius:24px;
+            padding:30px;
+            box-shadow:0 10px 28px rgba(0,0,0,0.08);
+        }
+
+        h1{
+            color:#0f4cdb;
+            margin-bottom:25px;
+            text-align:center;
+        }
+
+        .form-group{
+            margin-bottom:22px;
+        }
+
+        label{
+            display:block;
+            margin-bottom:8px;
+            font-weight:600;
+            color:#334155;
+        }
+
+        input,
+        select,
+        textarea{
+            width:100%;
+            padding:14px;
+            border:1px solid #dbe4f0;
+            border-radius:14px;
+            font-size:15px;
+        }
+
+        textarea{
+            min-height:140px;
+            resize:vertical;
+            line-height:1.7;
+        }
+
+        .btn{
+            width:100%;
+            border:none;
+            padding:15px;
+            border-radius:14px;
+            background:linear-gradient(135deg,#0f4cdb,#00b4ff);
+            color:white;
+            font-size:16px;
+            font-weight:700;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .btn:hover{
+            transform:translateY(-2px);
+            box-shadow:0 10px 22px rgba(15,76,219,0.25);
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📖 Create Reading Passage</h1>
+
+    <form id="passageForm">
+
+        <div class="form-group">
+            <label>Passage Title</label>
+            <input type="text"
+                   id="title"
+                   placeholder="Example: The Rainbow"
+                   required>
+        </div>
+
+        <div class="form-group">
+            <label>Slide 1 Text</label>
+            <textarea id="slide1"
+                      placeholder="Enter first slide passage..."
+                      required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Slide 2 Text</label>
+            <textarea id="slide2"
+                      placeholder="Enter second slide passage..."
+                      required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Class</label>
+
+            <select id="class" required>
+                <option value="">Select Class</option>
+                <option value="1">Class 1</option>
+                <option value="2">Class 2</option>
+                <option value="3">Class 3</option>
+                <option value="4">Class 4</option>
+                <option value="5">Class 5</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Section</label>
+
+            <select id="section" required>
+                <option value="">Select Section</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn">
+            🚀 Publish Passage
+        </button>
+
+    </form>
+
+</div>
+
+<script type="module"
+        src="../../js/admin/createPassage.js">
+</script>
+
+</body>
+</html>
