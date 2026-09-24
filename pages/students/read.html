@@ -467,6 +467,19 @@ let recognitionSupported = false;
 
 let recognitionStarted = false;
 
+
+/*
+    IMPORTANT
+
+    These variables store each slide separately.
+
+    Slide 1 is NOT deleted when Slide 2 starts.
+*/
+
+let slideTranscripts = [];
+
+let slideReadingTimes = [];
+
 let recognizedTranscript = '';
 
 let readingStartTime = null;
@@ -610,11 +623,13 @@ async function loadPassage(){
 
 
         /*
-         Support the current Admin format:
-         passageData.text
+            Support the current Admin format:
 
-         Also support older:
-         slide1 / slide2
+            passageData.text
+
+            Also support older:
+
+            slide1 / slide2
         */
 
         if(
@@ -661,6 +676,21 @@ async function loadPassage(){
             return;
 
         }
+
+
+        /*
+            Prepare storage for every slide.
+        */
+
+        slideTranscripts =
+            new Array(
+                currentSlides.length
+            ).fill('');
+
+        slideReadingTimes =
+            new Array(
+                currentSlides.length
+            ).fill(0);
 
 
         document.getElementById(
@@ -711,7 +741,16 @@ function showSlide(){
 
     readingEndTime = null;
 
-    recognizedTranscript = '';
+    /*
+        Load the saved transcript for this slide.
+
+        This is the important difference:
+        we DO NOT erase Slide 1's transcript.
+    */
+
+    recognizedTranscript =
+        slideTranscripts[currentSlide] || '';
+
 
     audioBlob = null;
 
@@ -795,6 +834,69 @@ function showSlide(){
 
 
 /* =====================================================
+   SAVE CURRENT SLIDE DATA
+===================================================== */
+
+function saveCurrentSlideData(){
+
+    /*
+        Save transcript
+    */
+
+    slideTranscripts[currentSlide] =
+        String(
+            recognizedTranscript || ''
+        )
+        .replace(
+            /\s+/g,
+            ' '
+        )
+        .trim();
+
+
+    /*
+        Save reading time
+
+        If the student started reading,
+        calculate actual time.
+    */
+
+    if(readingStartTime){
+
+        const endTime =
+            readingEndTime ||
+            Date.now();
+
+
+        const seconds =
+            Math.max(
+                1,
+                Math.round(
+                    (
+                        endTime -
+                        readingStartTime
+                    ) / 1000
+                )
+            );
+
+
+        slideReadingTimes[currentSlide] =
+            seconds;
+
+    }
+
+    else{
+
+        slideReadingTimes[currentSlide] =
+            slideReadingTimes[currentSlide] || 0;
+
+    }
+
+}
+
+
+
+/* =====================================================
    TIMER
 ===================================================== */
 
@@ -830,6 +932,14 @@ function startTimer(){
 
                     readingEndTime =
                         Date.now();
+
+
+                    /*
+                        Save the current slide
+                        before moving anywhere.
+                    */
+
+                    saveCurrentSlideData();
 
 
                     if(
@@ -965,6 +1075,14 @@ window.startRecording =
             mediaRecorder.start();
 
 
+            /*
+                Start a fresh transcript ONLY
+                for the current slide.
+
+                Previous slide remains safely
+                stored in slideTranscripts[].
+            */
+
             recognizedTranscript = '';
 
 
@@ -995,6 +1113,8 @@ window.startRecording =
 
             readingStartTime =
                 Date.now();
+
+            readingEndTime = null;
 
 
             startTimer();
@@ -1080,8 +1200,20 @@ window.stopRecording =
         );
 
 
-        readingEndTime =
-            Date.now();
+        if(readingStartTime){
+
+            readingEndTime =
+                Date.now();
+
+        }
+
+
+        /*
+            Save transcript and time for
+            the current slide.
+        */
+
+        saveCurrentSlideData();
 
 
         stopSpeechRecognition();
@@ -1146,9 +1278,29 @@ window.playRecording =
 window.nextSlide =
     function(){
 
+        /*
+            Stop timer first.
+        */
+
         clearInterval(
             timerInterval
         );
+
+
+        /*
+            Save Slide 1 before moving
+            to Slide 2.
+        */
+
+        if(readingStartTime){
+
+            readingEndTime =
+                Date.now();
+
+        }
+
+
+        saveCurrentSlideData();
 
 
         stopSpeechRecognition();
@@ -1192,8 +1344,22 @@ window.submitPassage =
         );
 
 
-        readingEndTime =
-            Date.now();
+        if(readingStartTime){
+
+            readingEndTime =
+                Date.now();
+
+        }
+
+
+        /*
+            VERY IMPORTANT:
+
+            Save the final slide before
+            creating the Firestore submission.
+        */
+
+        saveCurrentSlideData();
 
 
         stopSpeechRecognition();
@@ -1238,18 +1404,69 @@ window.submitPassage =
             '';
 
 
-        const readingTime =
-            readingStartTime
-                ? Math.max(
-                    1,
-                    Math.round(
-                        (
-                            readingEndTime -
-                            readingStartTime
-                        ) / 1000
-                    )
+        /*
+            ==========================================
+            COMBINE ALL SLIDES
+            ==========================================
+        */
+
+        const combinedTranscript =
+            slideTranscripts
+                .filter(
+                    text =>
+                        String(text).trim()
                 )
-                : 0;
+                .join(' ')
+                .replace(
+                    /\s+/g,
+                    ' '
+                )
+                .trim();
+
+
+        /*
+            Combine reading time of all slides.
+        */
+
+        const combinedReadingTime =
+            slideReadingTimes
+                .reduce(
+                    (
+                        total,
+                        time
+                    ) =>
+                        total +
+                        (
+                            Number(time) || 0
+                        ),
+                    0
+                );
+
+
+        /*
+            Safety fallback.
+
+            If for some reason the timing
+            information was not captured,
+            use the current reading time.
+        */
+
+        const finalReadingTime =
+            Math.max(
+                1,
+                combinedReadingTime ||
+                (
+                    readingStartTime &&
+                    readingEndTime
+                        ? Math.round(
+                            (
+                                readingEndTime -
+                                readingStartTime
+                            ) / 1000
+                        )
+                        : 1
+                )
+            );
 
 
         try{
@@ -1286,11 +1503,36 @@ window.submitPassage =
                     status:
                         'completed',
 
+                    /*
+                        Combined reading time
+                    */
+
                     readingTime:
-                        readingTime,
+                        finalReadingTime,
+
+                    /*
+                        Combined transcript
+                    */
 
                     transcript:
-                        recognizedTranscript,
+                        combinedTranscript,
+
+                    /*
+                        Store slide-wise data too.
+
+                        This allows the Admin report
+                        to use the combined result while
+                        retaining the individual slide data.
+                    */
+
+                    slideTranscripts:
+                        slideTranscripts,
+
+                    slideReadingTimes:
+                        slideReadingTimes,
+
+                    slideCount:
+                        currentSlides.length,
 
                     submittedAt:
                         serverTimestamp()
@@ -1299,6 +1541,12 @@ window.submitPassage =
 
             );
 
+
+            /*
+                ==========================================
+                LOCAL PROGRESS
+                ==========================================
+            */
 
             let completedPassages =
                 JSON.parse(
@@ -1440,6 +1688,7 @@ function showError(message){
 ===================================================== */
 
 loadPassage();
+
 
 </script>
 
