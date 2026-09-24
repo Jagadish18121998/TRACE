@@ -1692,6 +1692,7 @@ async function generateStudentReport(){
 
 /* =====================================================
    DISPLAY STUDENT REPORT
+   MULTI-PASSAGE REPORT SYSTEM
 ===================================================== */
 
 async function displayStudentReport(
@@ -1729,17 +1730,112 @@ async function displayStudentReport(
     }
 
 
-    /*
-        =================================================
-        USE THE MOST RECENT COMPLETED SUBMISSION
-        =================================================
-    */
+    /* =================================================
+       GET ALL PASSAGES
+    ================================================= */
 
-    const latest =
-        submissions[
-            submissions.length - 1
-        ];
+    const passageSnapshot =
+        await getDocs(
+            collection(
+                db,
+                "passages"
+            )
+        );
 
+
+    const passageMap = new Map();
+
+
+    passageSnapshot.docs.forEach(
+        passageDoc => {
+
+            passageMap.set(
+                passageDoc.id,
+                {
+                    id:
+                        passageDoc.id,
+
+                    ...passageDoc.data()
+                }
+            );
+
+        }
+    );
+
+
+    /* =================================================
+       SORT SUBMISSIONS
+       NEWEST FIRST
+    ================================================= */
+
+    const sortedSubmissions =
+        submissions
+            .slice()
+            .sort(
+                (a,b) => {
+
+                    const aTime =
+                        a.submittedAt &&
+                        typeof a.submittedAt.toMillis === "function"
+                            ? a.submittedAt.toMillis()
+                            : 0;
+
+                    const bTime =
+                        b.submittedAt &&
+                        typeof b.submittedAt.toMillis === "function"
+                            ? b.submittedAt.toMillis()
+                            : 0;
+
+                    return bTime - aTime;
+
+                }
+            );
+
+
+    /* =================================================
+       KEEP ONE LATEST ATTEMPT PER PASSAGE
+    ================================================= */
+
+    const passageSubmissions =
+        new Map();
+
+
+    sortedSubmissions.forEach(
+        submission => {
+
+            const passageId =
+                String(
+                    submission.passageId || ""
+                ).trim();
+
+
+            if(
+                passageId &&
+                !passageSubmissions.has(
+                    passageId
+                )
+            ){
+
+                passageSubmissions.set(
+                    passageId,
+                    submission
+                );
+
+            }
+
+        }
+    );
+
+
+    const reportSubmissions =
+        Array.from(
+            passageSubmissions.values()
+        );
+
+
+    /* =================================================
+       REPORT HEADER
+    ================================================= */
 
     result.innerHTML = `
 
@@ -1760,8 +1856,7 @@ async function displayStudentReport(
                     </h2>
 
                     <p>
-                        Combined Slide 1 + Slide 2
-                        Reading Report
+                        Individual Student Report Card
                     </p>
 
                 </div>
@@ -1786,9 +1881,7 @@ async function displayStudentReport(
             <hr style="margin:20px 0;">
 
 
-            <!-- ==========================================
-                 STUDENT INFORMATION
-            =========================================== -->
+            <!-- STUDENT INFORMATION -->
 
             <h3>
                 👤 Student Information
@@ -1801,7 +1894,9 @@ async function displayStudentReport(
                 <div class="card">
 
                     <h2>
-                        ${escapeHTML(student.name || "-")}
+                        ${escapeHTML(
+                            student.name || "-"
+                        )}
                     </h2>
 
                     <p>
@@ -1814,7 +1909,9 @@ async function displayStudentReport(
                 <div class="card">
 
                     <h2>
-                        ${escapeHTML(student.admissionNo || "-")}
+                        ${escapeHTML(
+                            student.admissionNo || "-"
+                        )}
                     </h2>
 
                     <p>
@@ -1842,14 +1939,11 @@ async function displayStudentReport(
                 <div class="card">
 
                     <h2>
-                        ${escapeHTML(
-                            latest.passageTitle ||
-                            "Reading Passage"
-                        )}
+                        ${reportSubmissions.length}
                     </h2>
 
                     <p>
-                        Passage
+                        Passages Attempted
                     </p>
 
                 </div>
@@ -1857,109 +1951,95 @@ async function displayStudentReport(
             </div>
 
 
-            <!-- ==========================================
-                 ANALYSIS LOADING
-            =========================================== -->
+            <!-- PASSAGE REPORTS -->
 
-            <div id="analysisLoading"
-                 style="
-                    margin-top:25px;
-                    padding:25px;
-                    text-align:center;
-                 ">
-
-                ⏳ Analysing combined reading...
+            <div id="passageReportsContainer"
+                 style="margin-top:30px;">
 
             </div>
-
-
-            <div id="analysisResult"></div>
 
         </div>
 
     `;
 
 
-    try{
+    const container =
+        document.getElementById(
+            "passageReportsContainer"
+        );
 
-        /* ---------------------------------------------
-           GET ALL PASSAGES
-        --------------------------------------------- */
 
-        const passageSnapshot =
-            await getDocs(
-                collection(
-                    db,
-                    "passages"
-                )
+    /* =================================================
+       GENERATE EACH PASSAGE REPORT
+    ================================================= */
+
+    for(
+        let index = 0;
+        index < reportSubmissions.length;
+        index++
+    ){
+
+        const submission =
+            reportSubmissions[index];
+
+
+        const passage =
+            passageMap.get(
+                submission.passageId
             );
 
 
-        const passageDoc =
-            passageSnapshot.docs.find(
-                item =>
-                    item.id ===
-                    latest.passageId
-            );
+        if(!passage){
 
+            container.innerHTML += `
 
-        if(!passageDoc){
+                <div class="panel"
+                     style="
+                        margin-top:20px;
+                        border-left:5px solid #dc2626;
+                     ">
 
-            throw new Error(
-                "Original passage could not be found."
-            );
+                    <h3>
+                        📖 Passage ${index + 1}
+                    </h3>
+
+                    <p>
+                        Original passage could not be found.
+                    </p>
+
+                </div>
+
+            `;
+
+            continue;
 
         }
 
 
-        const passage =
-            passageDoc.data();
-
-
-        /*
-            =================================================
-            COMBINE SLIDE 1 + SLIDE 2 TEXT
-            =================================================
-
-            If slide1/slide2 exist, use them.
-
-            Otherwise fall back to passage.text
-            for compatibility with your existing
-            one-slide passages.
-        */
+        /* =============================================
+           COMBINE SLIDE 1 + SLIDE 2
+        ============================================= */
 
         let originalText = "";
 
 
-        const slide1Text =
-            String(
-                passage.slide1 || ""
-            ).trim();
-
-
-        const slide2Text =
-            String(
-                passage.slide2 || ""
-            ).trim();
-
-
         if(
-            slide1Text ||
-            slide2Text
+            passage.slide1 ||
+            passage.slide2
         ){
 
             originalText =
                 [
-                    slide1Text,
-                    slide2Text
+                    passage.slide1,
+                    passage.slide2
                 ]
-                .filter(Boolean)
-                .join(" ")
-                .replace(
-                    /\s+/g,
-                    " "
+                .filter(
+                    text =>
+                        String(
+                            text || ""
+                        ).trim()
                 )
-                .trim();
+                .join(" ");
 
         }
 
@@ -1968,327 +2048,148 @@ async function displayStudentReport(
             originalText =
                 String(
                     passage.text || ""
-                )
-                .trim();
+                ).trim();
 
         }
 
 
-        /*
-            =================================================
-            COMBINED STUDENT TRANSCRIPT
-            =================================================
+        /* =============================================
+           GET STUDENT TRANSCRIPT
+        ============================================= */
 
-            New read.html stores:
-
-            Slide 1 + Slide 2
-
-            in submission.transcript
-        */
-
-        const transcript =
+        let transcript =
             String(
-                latest.transcript || ""
+                submission.transcript || ""
+            ).trim();
+
+
+        /*
+           New submissions contain slideTranscripts.
+           Use them when available because they preserve
+           Slide 1 and Slide 2 separately.
+        */
+
+        if(
+            Array.isArray(
+                submission.slideTranscripts
             )
-            .replace(
-                /\s+/g,
-                " "
-            )
-            .trim();
+        ){
 
-
-        if(!originalText){
-
-            throw new Error(
-                "The original passage does not contain readable text."
-            );
+            transcript =
+                submission.slideTranscripts
+                    .filter(
+                        text =>
+                            String(
+                                text || ""
+                            ).trim()
+                    )
+                    .join(" ")
+                    .trim();
 
         }
 
 
-        /*
-            =================================================
-            ANALYSE COMBINED READING
-            =================================================
-        */
+        /* =============================================
+           READING TIME
+        ============================================= */
+
+        let readingTime = 0;
+
+
+        if(
+            Array.isArray(
+                submission.slideReadingTimes
+            )
+        ){
+
+            readingTime =
+                submission.slideReadingTimes
+                    .reduce(
+                        (
+                            total,
+                            value
+                        ) =>
+                            total +
+                            Number(
+                                value || 0
+                            ),
+                        0
+                    );
+
+        }
+
+
+        if(
+            readingTime <= 0
+        ){
+
+            readingTime =
+                Number(
+                    submission.readingTime || 0
+                );
+
+        }
+
+
+        /* =============================================
+           ANALYSE THIS PASSAGE
+        ============================================= */
 
         const analysis =
             analyseReading(
                 originalText,
                 transcript,
-                latest.readingTime,
-                latest
+                readingTime
             );
 
 
-        const loading =
-            document.getElementById(
-                "analysisLoading"
+        /* =============================================
+           CREATE PASSAGE SECTION
+        ============================================= */
+
+        const passageBox =
+            document.createElement(
+                "div"
             );
 
 
-        if(loading){
-
-            loading.style.display =
-                "none";
-
-        }
+        passageBox.className =
+            "panel";
 
 
-        renderStudentAnalysis(
-            student,
-            latest,
-            originalText,
-            analysis
+        passageBox.style.marginTop =
+            "25px";
+
+
+        passageBox.innerHTML =
+            renderPassageReport(
+                index + 1,
+                passage,
+                submission,
+                originalText,
+                transcript,
+                analysis
+            );
+
+
+        container.appendChild(
+            passageBox
         );
 
     }
 
-    catch(error){
-
-        console.error(
-            "Reading analysis error:",
-            error
-        );
-
-
-        const loading =
-            document.getElementById(
-                "analysisLoading"
-            );
-
-
-        if(loading){
-
-            loading.innerHTML = `
-
-                <div class="error">
-
-                    ❌ Unable to analyse this reading.
-
-                    <br><br>
-
-                    ${escapeHTML(error.message)}
-
-                </div>
-
-            `;
-
-        }
-
-    }
-
 }
 
 
-
 /* =====================================================
-   NORMALISE WORDS
-===================================================== */
-
-function reportWords(text){
-
-    return String(text || "")
-
-        .toLowerCase()
-
-        .replace(
-            /[“”‘’]/g,
-            "'"
-        )
-
-        .replace(
-            /[^\p{L}\p{N}'-]+/gu,
-            " "
-        )
-
-        .split(/\s+/)
-
-        .filter(Boolean);
-
-}
-
-
-
-/* =====================================================
-   WORD ALIGNMENT
-===================================================== */
-
-function alignReading(
-    expectedWords,
-    spokenWords
-){
-
-    const result = [];
-
-    let i = 0;
-
-    let j = 0;
-
-
-    while(
-        i < expectedWords.length
-    ){
-
-        const expected =
-            expectedWords[i];
-
-
-        const spoken =
-            spokenWords[j];
-
-
-        /*
-            ==========================================
-            EXACT MATCH
-            ==========================================
-        */
-
-        if(
-            spoken &&
-            expected === spoken
-        ){
-
-            result.push({
-
-                expected:
-                    expected,
-
-                spoken:
-                    spoken,
-
-                type:
-                    "correct"
-
-            });
-
-            i++;
-
-            j++;
-
-            continue;
-
-        }
-
-
-        /*
-            ==========================================
-            EXPECTED WORD WAS SKIPPED
-            ==========================================
-        */
-
-        if(
-            spoken &&
-            expectedWords[i + 1] === spoken
-        ){
-
-            result.push({
-
-                expected:
-                    expected,
-
-                spoken:
-                    "",
-
-                type:
-                    "omission"
-
-            });
-
-            i++;
-
-            continue;
-
-        }
-
-
-        /*
-            ==========================================
-            EXTRA SPOKEN WORD
-            ==========================================
-        */
-
-        if(
-            spoken &&
-            spokenWords[j + 1] === expected
-        ){
-
-            j++;
-
-            continue;
-
-        }
-
-
-        /*
-            ==========================================
-            WRONG WORD / SUBSTITUTION
-            ==========================================
-        */
-
-        if(spoken){
-
-            result.push({
-
-                expected:
-                    expected,
-
-                spoken:
-                    spoken,
-
-                type:
-                    "substitution"
-
-            });
-
-            i++;
-
-            j++;
-
-            continue;
-
-        }
-
-
-        /*
-            ==========================================
-            WORD WAS OMITTED AT END
-            ==========================================
-        */
-
-        result.push({
-
-            expected:
-                expected,
-
-            spoken:
-                "",
-
-            type:
-                "omission"
-
-        });
-
-        i++;
-
-    }
-
-
-    return result;
-
-}
-
-
-
-/* =====================================================
-   READING ANALYSIS
+   ANALYSE READING
+   ALWAYS CALCULATE FROM THIS PASSAGE + TRANSCRIPT
 ===================================================== */
 
 function analyseReading(
     originalText,
     transcript,
-    readingTime,
-    submission
+    readingTime
 ){
 
     const expectedWords =
@@ -2303,12 +2204,6 @@ function analyseReading(
         );
 
 
-    /*
-        =================================================
-        ALIGN THE COMPLETE PASSAGE
-        =================================================
-    */
-
     const alignment =
         alignReading(
             expectedWords,
@@ -2316,68 +2211,40 @@ function analyseReading(
         );
 
 
-    /*
-        =================================================
-        COUNT RESULTS
-        =================================================
-    */
-
     const correct =
         alignment.filter(
             item =>
-                item.type ===
-                "correct"
+                item.type === "correct"
         ).length;
 
 
     const substitutions =
         alignment.filter(
             item =>
-                item.type ===
-                "substitution"
-        ).length;
+                item.type === "substitution"
+        );
 
 
     const omissions =
         alignment.filter(
             item =>
-                item.type ===
-                "omission"
-        ).length;
+                item.type === "omission"
+        );
 
 
     const errors =
-        substitutions +
-        omissions;
+        substitutions.length +
+        omissions.length;
 
-
-    /*
-        =================================================
-        READING TIME
-        =================================================
-
-        read.html now stores combined Slide 1 +
-        Slide 2 reading time.
-    */
 
     const seconds =
         Math.max(
             1,
             Number(
-                submission?.readingTime ??
-                readingTime ??
-                60
+                readingTime || 0
             )
         );
 
-
-    /*
-        =================================================
-        WCPM
-        =================================================
-
-        Correct words per minute.
-    */
 
     const wcpm =
         Math.round(
@@ -2388,18 +2255,6 @@ function analyseReading(
             )
         );
 
-
-    /*
-        =================================================
-        FLUENCY %
-        =================================================
-
-        Current TRACE percentage is based on:
-
-        Correct words / Total passage words × 100
-
-        This keeps the existing assessment logic.
-    */
 
     const fluencyPercent =
         expectedWords.length > 0
@@ -2412,51 +2267,6 @@ function analyseReading(
             )
 
             : 0;
-
-
-    /*
-        =================================================
-        INCORRECTLY READ WORDS
-        =================================================
-    */
-
-    const incorrectlyReadWords =
-        alignment
-            .filter(
-                item =>
-                    item.type ===
-                    "substitution"
-            )
-            .map(
-                item => ({
-
-                    expected:
-                        item.expected,
-
-                    spoken:
-                        item.spoken
-
-                })
-            );
-
-
-    /*
-        =================================================
-        SKIPPED WORDS
-        =================================================
-    */
-
-    const skippedWords =
-        alignment
-            .filter(
-                item =>
-                    item.type ===
-                    "omission"
-            )
-            .map(
-                item =>
-                    item.expected
-            );
 
 
     return {
@@ -2479,442 +2289,601 @@ function analyseReading(
 
         fluencyPercent,
 
-        accuracy:
-            fluencyPercent,
-
-        seconds,
-
-        incorrectlyReadWords,
-
-        skippedWords,
-
-        fromCombinedData:
-            true
+        seconds
 
     };
 
 }
 
 
-
 /* =====================================================
-   RENDER ANALYSIS
+   WORD NORMALISATION
 ===================================================== */
 
-function renderStudentAnalysis(
-    student,
+function reportWords(text){
+
+    return String(
+        text || ""
+    )
+
+        .toLowerCase()
+
+        .replace(
+            /[“”‘’]/g,
+            "'"
+        )
+
+        .replace(
+            /[.,!?;:()[\]{}"“”‘’]/g,
+            " "
+        )
+
+        .replace(
+            /[^\p{L}\p{N}'-]+/gu,
+            " "
+        )
+
+        .split(
+            /\s+/
+        )
+
+        .filter(Boolean);
+
+}
+
+
+/* =====================================================
+   WORD ALIGNMENT
+===================================================== */
+
+function alignReading(
+    expectedWords,
+    spokenWords
+){
+
+    const result = [];
+
+
+    let i = 0;
+
+    let j = 0;
+
+
+    while(
+        i <
+        expectedWords.length
+    ){
+
+        const expected =
+            expectedWords[i];
+
+
+        const spoken =
+            spokenWords[j];
+
+
+        /* =========================================
+           CORRECT
+        ========================================= */
+
+        if(
+            spoken &&
+            expected === spoken
+        ){
+
+            result.push({
+
+                expected,
+
+                spoken,
+
+                type:
+                    "correct"
+
+            });
+
+
+            i++;
+
+            j++;
+
+            continue;
+
+        }
+
+
+        /* =========================================
+           OMITTED WORD
+        ========================================= */
+
+        if(
+            spoken &&
+            expectedWords[
+                i + 1
+            ] === spoken
+        ){
+
+            result.push({
+
+                expected,
+
+                spoken:
+                    "",
+
+                type:
+                    "omission"
+
+            });
+
+
+            i++;
+
+            continue;
+
+        }
+
+
+        /* =========================================
+           EXTRA SPOKEN WORD
+        ========================================= */
+
+        if(
+            spoken &&
+            spokenWords[
+                j + 1
+            ] === expected
+        ){
+
+            j++;
+
+            continue;
+
+        }
+
+
+        /* =========================================
+           INCORRECT / SUBSTITUTION
+        ========================================= */
+
+        if(spoken){
+
+            result.push({
+
+                expected,
+
+                spoken,
+
+                type:
+                    "substitution"
+
+            });
+
+
+            i++;
+
+            j++;
+
+            continue;
+
+        }
+
+
+        /* =========================================
+           END OF SPEECH = OMITTED
+        ========================================= */
+
+        result.push({
+
+            expected,
+
+            spoken:
+                "",
+
+            type:
+                "omission"
+
+        });
+
+
+        i++;
+
+    }
+
+
+    return result;
+
+}
+
+
+/* =====================================================
+   RENDER ONE PASSAGE REPORT
+===================================================== */
+
+function renderPassageReport(
+    passageNumber,
+    passage,
     submission,
     originalText,
+    transcript,
     analysis
 ){
 
-    const result =
-        document.getElementById(
-            "analysisResult"
-        );
+    const incorrectWords =
+        analysis.substitutions;
 
 
-    const focus =
-        getReadingFocus(
-            analysis
-        );
+    const skippedWords =
+        analysis.omissions;
 
 
     const markedPassage =
         buildMarkedPassage(
-            originalText,
             analysis.alignment
         );
 
 
-    /*
-        =================================================
-        INCORRECT WORD LIST
-        =================================================
-    */
+    return `
 
-    let incorrectWordsHTML = "";
+        <!-- PASSAGE HEADER -->
 
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:15px;
+            flex-wrap:wrap;
+        ">
 
-    if(
-        analysis.incorrectlyReadWords.length > 0
-    ){
+            <div>
 
-        incorrectWordsHTML =
+                <h2>
+                    📖 Passage ${passageNumber}
+                </h2>
 
-            analysis.incorrectlyReadWords
-                .map(
-                    item => `
+                <h3 style="
+                    margin-top:5px;
+                ">
 
-                        <div style="
-                            padding:10px 12px;
-                            margin-bottom:8px;
-                            background:#fef2f2;
-                            border-radius:8px;
-                            border-left:4px solid #dc2626;
-                        ">
+                    ${escapeHTML(
+                        submission.passageTitle ||
+                        passage.title ||
+                        "Reading Passage"
+                    )}
 
-                            <strong>
-                                ${escapeHTML(item.expected)}
-                            </strong>
-
-                            <span style="
-                                margin:0 8px;
-                                color:#64748b;
-                            ">
-                                →
-                            </span>
-
-                            <span style="
-                                color:#dc2626;
-                                font-weight:600;
-                            ">
-                                ${escapeHTML(item.spoken)}
-                            </span>
-
-                        </div>
-
-                    `
-                )
-                .join("");
-
-    }
-
-    else{
-
-        incorrectWordsHTML = `
-
-            <div style="
-                padding:12px;
-                background:#f0fdf4;
-                border-radius:8px;
-                color:#166534;
-            ">
-
-                ✅ No incorrectly read words identified.
+                </h3>
 
             </div>
 
-        `;
-
-    }
-
-
-    /*
-        =================================================
-        SKIPPED WORD LIST
-        =================================================
-    */
-
-    let skippedWordsHTML = "";
-
-
-    if(
-        analysis.skippedWords.length > 0
-    ){
-
-        skippedWordsHTML = `
 
             <div style="
-                display:flex;
-                flex-wrap:wrap;
-                gap:8px;
+                padding:8px 14px;
+                background:#eff6ff;
+                border-radius:20px;
+                font-weight:600;
             ">
 
-                ${
-                    analysis.skippedWords
-                        .map(
-                            word => `
-
-                                <span style="
-                                    display:inline-block;
-                                    padding:7px 11px;
-                                    background:#fff7ed;
-                                    color:#c2410c;
-                                    border:1px solid #fed7aa;
-                                    border-radius:20px;
-                                    font-weight:600;
-                                ">
-                                    ${escapeHTML(word)}
-                                </span>
-
-                            `
-                        )
-                        .join("")
-                }
+                Assessment ${passageNumber}
 
             </div>
 
-        `;
+        </div>
 
-    }
 
-    else{
+        <hr style="
+            margin:18px 0;
+        ">
 
-        skippedWordsHTML = `
 
-            <div style="
-                padding:12px;
-                background:#f0fdf4;
-                border-radius:8px;
-                color:#166534;
-            ">
+        <!-- PERFORMANCE -->
 
-                ✅ No skipped words identified.
+        <h3>
+            📊 Reading Performance
+        </h3>
+
+
+        <div class="cards"
+             style="margin-top:15px;">
+
+            <div class="card">
+
+                <h2 style="
+                    font-size:32px;
+                ">
+
+                    ${analysis.wcpm}
+
+                </h2>
+
+                <p>
+                    WCPM
+                </p>
 
             </div>
 
-        `;
 
-    }
+            <div class="card">
+
+                <h2>
+
+                    ${analysis.fluencyPercent}%
+
+                </h2>
+
+                <p>
+                    Fluency / Accuracy
+                </p>
+
+            </div>
 
 
-    result.innerHTML = `
+            <div class="card">
 
-        <!-- ==========================================
-             PERFORMANCE
-        =========================================== -->
+                <h2>
+
+                    ${analysis.correct}
+
+                </h2>
+
+                <p>
+                    Correct Words
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h2>
+
+                    ${analysis.errors}
+
+                </h2>
+
+                <p>
+                    Total Errors
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- SECONDARY STATS -->
+
+        <div style="
+            display:grid;
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(150px,1fr)
+                );
+            gap:12px;
+            margin-top:15px;
+        ">
+
+
+            <div style="
+                padding:15px;
+                background:#f8fafc;
+                border-radius:12px;
+            ">
+
+                <strong>
+                    ${analysis.expectedWords.length}
+                </strong>
+
+                <br>
+
+                Total Passage Words
+
+            </div>
+
+
+            <div style="
+                padding:15px;
+                background:#f8fafc;
+                border-radius:12px;
+            ">
+
+                <strong>
+                    ${incorrectWords.length}
+                </strong>
+
+                <br>
+
+                Incorrect Words
+
+            </div>
+
+
+            <div style="
+                padding:15px;
+                background:#f8fafc;
+                border-radius:12px;
+            ">
+
+                <strong>
+                    ${skippedWords.length}
+                </strong>
+
+                <br>
+
+                Skipped Words
+
+            </div>
+
+
+            <div style="
+                padding:15px;
+                background:#f8fafc;
+                border-radius:12px;
+            ">
+
+                <strong>
+                    ${analysis.seconds}s
+                </strong>
+
+                <br>
+
+                Reading Time
+
+            </div>
+
+        </div>
+
+
+        <!-- INCORRECT WORDS -->
 
         <div style="
             margin-top:25px;
         ">
 
             <h3>
-                📊 Combined Reading Performance
+                ❌ Incorrectly Read Words
             </h3>
 
 
-            <div class="cards"
-                 style="margin-top:15px;">
+            ${
+                incorrectWords.length === 0
 
-                <!-- WCPM -->
+                    ? `
 
-                <div class="card">
+                        <p style="
+                            margin-top:10px;
+                            color:#16a34a;
+                        ">
 
-                    <h2 style="
-                        font-size:32px;
-                    ">
+                            ✅ No incorrect word substitutions detected.
 
-                        ${analysis.wcpm}
+                        </p>
 
-                    </h2>
+                    `
 
-                    <p>
-                        WCPM
-                    </p>
+                    :
 
-                </div>
+                    `
 
+                        <div style="
+                            margin-top:12px;
+                            display:flex;
+                            flex-wrap:wrap;
+                            gap:10px;
+                        ">
 
-                <!-- FLUENCY -->
+                            ${
 
-                <div class="card">
+                                incorrectWords
+                                    .map(
+                                        item => `
 
-                    <h2>
-                        ${analysis.fluencyPercent}%
-                    </h2>
+                                            <span style="
+                                                padding:8px 12px;
+                                                background:#fef2f2;
+                                                border:1px solid #fecaca;
+                                                border-radius:10px;
+                                            ">
 
-                    <p>
-                        Fluency %
-                    </p>
+                                                <strong>
+                                                    ${escapeHTML(
+                                                        item.expected
+                                                    )}
+                                                </strong>
 
-                </div>
+                                                →
+                                                ${escapeHTML(
+                                                    item.spoken
+                                                )}
 
+                                            </span>
 
-                <!-- CORRECT -->
+                                        `
+                                    )
+                                    .join("")
 
-                <div class="card">
+                            }
 
-                    <h2>
-                        ${analysis.correct}
-                    </h2>
+                        </div>
 
-                    <p>
-                        Correct Words
-                    </p>
+                    `
 
-                </div>
-
-
-                <!-- ERRORS -->
-
-                <div class="card">
-
-                    <h2>
-                        ${analysis.errors}
-                    </h2>
-
-                    <p>
-                        Total Errors
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <!-- SECONDARY PERFORMANCE -->
-
-            <div style="
-                display:grid;
-                grid-template-columns:
-                    repeat(
-                        auto-fit,
-                        minmax(150px,1fr)
-                    );
-                gap:12px;
-                margin-top:15px;
-            ">
-
-
-                <div style="
-                    padding:15px;
-                    background:#f8fafc;
-                    border-radius:12px;
-                ">
-
-                    <strong>
-                        ${analysis.omissions}
-                    </strong>
-
-                    <br>
-
-                    Skipped Words
-
-                </div>
-
-
-                <div style="
-                    padding:15px;
-                    background:#f8fafc;
-                    border-radius:12px;
-                ">
-
-                    <strong>
-                        ${analysis.substitutions}
-                    </strong>
-
-                    <br>
-
-                    Incorrect Words
-
-                </div>
-
-
-                <div style="
-                    padding:15px;
-                    background:#f8fafc;
-                    border-radius:12px;
-                ">
-
-                    <strong>
-                        ${analysis.seconds}s
-                    </strong>
-
-                    <br>
-
-                    Combined Reading Time
-
-                </div>
-
-
-                <div style="
-                    padding:15px;
-                    background:#f8fafc;
-                    border-radius:12px;
-                ">
-
-                    <strong>
-                        ${analysis.expectedWords.length}
-                    </strong>
-
-                    <br>
-
-                    Total Passage Words
-
-                </div>
-
-            </div>
+            }
 
         </div>
 
 
-
-        <!-- ==========================================
-             INCORRECTLY READ WORDS
-        =========================================== -->
+        <!-- SKIPPED WORDS -->
 
         <div style="
-            margin-top:30px;
-        ">
-
-            <h3>
-                🔴 Incorrectly Read Words
-            </h3>
-
-            <p style="
-                margin-top:6px;
-                color:#64748b;
-                font-size:14px;
-            ">
-
-                Expected word → Word identified
-                from the student's reading
-
-            </p>
-
-
-            <div style="
-                margin-top:15px;
-            ">
-
-                ${incorrectWordsHTML}
-
-            </div>
-
-        </div>
-
-
-
-        <!-- ==========================================
-             SKIPPED WORDS
-        =========================================== -->
-
-        <div style="
-            margin-top:30px;
+            margin-top:25px;
         ">
 
             <h3>
                 🟠 Skipped Words
             </h3>
 
-            <p style="
-                margin-top:6px;
-                color:#64748b;
-                font-size:14px;
-            ">
 
-                Words present in the passage
-                but not identified in the reading.
+            ${
+                skippedWords.length === 0
 
-            </p>
+                    ? `
 
+                        <p style="
+                            margin-top:10px;
+                            color:#16a34a;
+                        ">
 
-            <div style="
-                margin-top:15px;
-            ">
+                            ✅ No skipped words detected.
 
-                ${skippedWordsHTML}
+                        </p>
 
-            </div>
+                    `
+
+                    :
+
+                    `
+
+                        <div style="
+                            margin-top:12px;
+                            display:flex;
+                            flex-wrap:wrap;
+                            gap:8px;
+                        ">
+
+                            ${
+
+                                skippedWords
+                                    .map(
+                                        item => `
+
+                                            <span style="
+                                                padding:7px 10px;
+                                                background:#fff7ed;
+                                                border:1px solid #fed7aa;
+                                                border-radius:8px;
+                                            ">
+
+                                                ${escapeHTML(
+                                                    item.expected
+                                                )}
+
+                                            </span>
+
+                                        `
+                                    )
+                                    .join("")
+
+                            }
+
+                        </div>
+
+                    `
+
+            }
 
         </div>
 
 
-
-        <!-- ==========================================
-             WORD LEVEL PASSAGE
-        =========================================== -->
+        <!-- WORD LEVEL PASSAGE -->
 
         <div style="
             margin-top:30px;
@@ -2938,27 +2907,35 @@ function renderStudentAnalysis(
                     text-decoration-color:#16a34a;
                     text-decoration-thickness:3px;
                 ">
+
                     Correct
+
                 </span>
 
                 &nbsp;&nbsp;
+
 
                 <span style="
                     text-decoration:underline;
                     text-decoration-color:#dc2626;
                     text-decoration-thickness:3px;
                 ">
+
                     Incorrect
+
                 </span>
 
                 &nbsp;&nbsp;
+
 
                 <span style="
                     text-decoration:underline;
                     text-decoration-color:#f97316;
                     text-decoration-thickness:3px;
                 ">
+
                     Skipped
+
                 </span>
 
             </div>
@@ -2981,13 +2958,54 @@ function renderStudentAnalysis(
         </div>
 
 
-
-        <!-- ==========================================
-             FOCUS
-        =========================================== -->
+        <!-- TRANSCRIPT -->
 
         <div style="
-            margin-top:30px;
+            margin-top:25px;
+        ">
+
+            <h3>
+                🎙 Student Speech Transcript
+            </h3>
+
+
+            <div style="
+                margin-top:10px;
+                padding:18px;
+                background:#f8fafc;
+                border-radius:12px;
+                line-height:1.8;
+            ">
+
+                ${
+                    transcript
+
+                        ? escapeHTML(
+                            transcript
+                        )
+
+                        : `
+
+                            <span style="
+                                color:#dc2626;
+                            ">
+
+                                No speech transcript was saved for this assessment.
+
+                            </span>
+
+                        `
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- FOCUS -->
+
+        <div style="
+            margin-top:25px;
             padding:20px;
             background:#eff6ff;
             border-left:
@@ -2999,12 +3017,15 @@ function renderStudentAnalysis(
                 🎯 Reading Focus
             </h3>
 
+
             <p style="
                 margin-top:8px;
                 line-height:1.7;
             ">
 
-                ${focus}
+                ${getReadingFocus(
+                    analysis
+                )}
 
             </p>
 
@@ -3015,32 +3036,13 @@ function renderStudentAnalysis(
 }
 
 
-
 /* =====================================================
    MARKED PASSAGE
 ===================================================== */
 
 function buildMarkedPassage(
-    originalText,
     alignment
 ){
-
-    /*
-        The alignment contains the complete
-        Slide 1 + Slide 2 passage.
-    */
-
-    if(
-        !alignment ||
-        alignment.length === 0
-    ){
-
-        return escapeHTML(
-            originalText
-        );
-
-    }
-
 
     return alignment
         .map(
@@ -3050,10 +3052,6 @@ function buildMarkedPassage(
                     "#16a34a";
 
 
-                let title =
-                    "Correct";
-
-
                 if(
                     item.type ===
                     "substitution"
@@ -3061,11 +3059,6 @@ function buildMarkedPassage(
 
                     underlineColor =
                         "#dc2626";
-
-                    title =
-                        `Incorrect: ${
-                            item.spoken || ""
-                        }`;
 
                 }
 
@@ -3078,27 +3071,23 @@ function buildMarkedPassage(
                     underlineColor =
                         "#f97316";
 
-                    title =
-                        "Skipped";
-
                 }
 
 
                 return `
 
-                    <span
-                        title="${escapeHTML(title)}"
-                        style="
-                            text-decoration:underline;
-                            text-decoration-color:${underlineColor};
-                            text-decoration-thickness:3px;
-                            text-underline-offset:4px;
-                            margin-right:5px;
-                        "
-                    >
+                    <span style="
+                        text-decoration:underline;
+                        text-decoration-color:${underlineColor};
+                        text-decoration-thickness:3px;
+                        text-underline-offset:4px;
+                        margin-right:5px;
+                    ">
+
                         ${escapeHTML(
                             item.expected
                         )}
+
                     </span>
 
                 `;
@@ -3110,9 +3099,8 @@ function buildMarkedPassage(
 }
 
 
-
 /* =====================================================
-   FOCUS SUGGESTION
+   READING FOCUS
 ===================================================== */
 
 function getReadingFocus(
@@ -3127,10 +3115,8 @@ function getReadingFocus(
 
             Focus on
             <strong>reading accuracy</strong>.
-            Read slowly and carefully, paying
-            special attention to unfamiliar words.
-            Short daily read-aloud practice will help
-            reduce errors.
+            Read slowly and carefully, paying special
+            attention to unfamiliar words.
 
         `;
 
@@ -3145,9 +3131,8 @@ function getReadingFocus(
 
             Focus on
             <strong>reading fluency and pace</strong>.
-            Practise reading aloud regularly while
-            maintaining correct pronunciation and
-            smooth phrasing.
+            Practise reading aloud regularly while maintaining
+            correct pronunciation and smooth phrasing.
 
         `;
 
@@ -3155,16 +3140,15 @@ function getReadingFocus(
 
 
     if(
-        analysis.omissions >
-        analysis.substitutions
+        analysis.omissions.length >
+        analysis.substitutions.length
     ){
 
         return `
 
             Focus on
             <strong>careful word-by-word reading</strong>.
-            Avoid skipping words and use your finger
-            or a pointer while practising if necessary.
+            Avoid skipping words during reading practice.
 
         `;
 
@@ -3172,16 +3156,15 @@ function getReadingFocus(
 
 
     if(
-        analysis.substitutions >
-        3
+        analysis.substitutions.length > 3
     ){
 
         return `
 
             Focus on
             <strong>accurate word recognition</strong>.
-            Practise unfamiliar vocabulary and pause
-            briefly when you are unsure of a word.
+            Practise unfamiliar vocabulary and pause briefly
+            when unsure of a word.
 
         `;
 
@@ -3197,10 +3180,7 @@ function getReadingFocus(
 
             Excellent reading fluency and accuracy.
             Continue developing
-            <strong>
-                expression, phrasing and appropriate pauses
-            </strong>
-            while reading aloud.
+            <strong>expression, phrasing and appropriate pauses</strong>.
 
         `;
 
@@ -3209,27 +3189,25 @@ function getReadingFocus(
 
     return `
 
-        Your reading is developing well.
-        Continue regular read-aloud practice and
-        focus on maintaining both
-        <strong>
-            accuracy and a steady reading pace
-        </strong>.
+        Reading is developing well.
+        Continue regular read-aloud practice while maintaining
+        both <strong>accuracy and a steady reading pace</strong>.
 
     `;
 
 }
 
 
-
 /* =====================================================
    ESCAPE HTML
 ===================================================== */
 
-function escapeHTML(value){
+function escapeHTML(
+    value
+){
 
     return String(
-        value ?? ""
+        value || ""
     )
 
         .replace(
