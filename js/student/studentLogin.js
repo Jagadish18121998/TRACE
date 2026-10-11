@@ -67,10 +67,14 @@ loginForm.addEventListener('submit', async (e) => {
         );
 
         localStorage.setItem(
-            'studentLoginId',
-            student.loginId
-        );
+    'studentId',
+    loginId
+);
 
+localStorage.setItem(
+    'studentLoginId',
+    student.loginId
+);
         alert('✅ Login successful');
 
         window.location.href = 'dashboard.html';

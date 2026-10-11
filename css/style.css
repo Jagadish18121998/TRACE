@@ -277,3 +277,199 @@ footer{
     font-weight:600;
 
 }
+
+/* ==========================================
+   TRACE - INDIVIDUAL STUDENT REPORT
+   ========================================== */
+
+#individualStudentReport {
+    margin: 28px 0;
+    padding: 28px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    box-shadow: 0 8px 28px rgba(15, 40, 90, 0.08);
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Report heading */
+
+#individualStudentReport .report-section-header {
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #e8edf5;
+}
+
+#individualStudentReport .report-section-header h2 {
+    margin: 0 0 8px;
+    color: #163b75;
+    font-size: 25px;
+    font-weight: 750;
+    letter-spacing: -0.4px;
+}
+
+#individualStudentReport .report-section-header p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Dropdown layout */
+
+#individualStudentReport .student-report-controls {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px 18px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#individualStudentReport .student-report-controls label {
+    display: block;
+    margin: 0 0 1px;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+#individualStudentReport .student-report-controls select {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    height: 46px;
+    padding: 0 12px;
+    color: #1e293b;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    font-size: 14px;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#individualStudentReport .student-report-controls select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+#individualStudentReport .student-report-controls select:disabled {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* Put labels above their corresponding dropdowns */
+
+#individualStudentReport .student-report-controls label:nth-of-type(1) {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+#individualStudentReport #studentReportClassSelector {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+#individualStudentReport .student-report-controls label:nth-of-type(2) {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+#individualStudentReport #studentReportSectionSelector {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+#individualStudentReport .student-report-controls label:nth-of-type(3) {
+    grid-column: 3;
+    grid-row: 1;
+}
+
+#individualStudentReport #studentReportSelector {
+    grid-column: 3;
+    grid-row: 2;
+}
+
+/* Action buttons */
+
+#individualStudentReport .student-report-controls button {
+    min-height: 44px;
+    padding: 11px 18px;
+    border: none;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#individualStudentReport #viewStudentReportBtn {
+    grid-column: 1 / 3;
+    grid-row: 3;
+    color: #ffffff;
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.18);
+}
+
+#individualStudentReport #printStudentReportBtn {
+    grid-column: 3;
+    grid-row: 3;
+    color: #1d4ed8;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+}
+
+#individualStudentReport .student-report-controls button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(15, 40, 90, 0.13);
+}
+
+/* Status message */
+
+#individualStudentReport #studentReportMessage {
+    margin: 10px 0;
+    color: #475569;
+    font-size: 14px;
+}
+
+/* Generated report card */
+
+#individualStudentReport #studentReportCard {
+    margin-top: 22px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* Responsive layout for smaller screens */
+
+@media (max-width: 760px) {
+    #individualStudentReport {
+        padding: 20px 16px;
+    }
+
+    #individualStudentReport .student-report-controls {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    #individualStudentReport .student-report-controls label:nth-of-type(1),
+    #individualStudentReport .student-report-controls label:nth-of-type(2),
+    #individualStudentReport .student-report-controls label:nth-of-type(3),
+    #individualStudentReport #studentReportClassSelector,
+    #individualStudentReport #studentReportSectionSelector,
+    #individualStudentReport #studentReportSelector,
+    #individualStudentReport #viewStudentReportBtn,
+    #individualStudentReport #printStudentReportBtn {
+        grid-column: 1;
+        grid-row: auto;
+    }
+
+    #individualStudentReport .student-report-controls button {
+        width: 100%;
+        margin-top: 4px;
+    }
+}
